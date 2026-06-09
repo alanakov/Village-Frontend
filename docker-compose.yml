@@ -1,0 +1,18 @@
+services:
+  village-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: village-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/templates
+    networks:
+      - aldeiaviva_network
+
+networks:
+  aldeiaviva_network:
+    external: true
