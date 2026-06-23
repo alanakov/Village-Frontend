@@ -4,7 +4,8 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/utils/helpers'
 import { SECTION_META, DEFAULT_META, PAGE_GROUPS } from './sectionMeta'
 import type { Section } from '@/types'
-import type { PageGroupKey, ActiveView } from './types'
+import type { PageGroupKey } from './sectionMeta'
+import type { ActiveView } from './types'
 
 interface SectionNavProps {
   sections: Section[]

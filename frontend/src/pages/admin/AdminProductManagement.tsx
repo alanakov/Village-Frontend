@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Pencil, Trash2, Search, Image } from 'lucide-react'
-import { productUploadSchema, type ProductUploadFormData } from '@/utils/validations'
+import { productUploadSchema, type ProductUploadFormData, type ProductUploadFormInput } from '@/utils/validations'
 import { useProducts } from '@/hooks/useProducts'
 import { useImageUpload } from '@/hooks/useImageUpload'
 import { Button } from '@/components/ui/Button'
@@ -34,7 +34,7 @@ export function AdminProductManagement() {
     reset,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<ProductUploadFormData>({
+  } = useForm<ProductUploadFormInput>({
     resolver: zodResolver(productUploadSchema),
     defaultValues: { name: '', description: '', price: 0, size: '', categoryId: 0 },
   })

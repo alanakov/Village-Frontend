@@ -97,7 +97,8 @@ export const productUploadSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
   description: z.string().min(1, 'Descrição é obrigatória').max(500),
   price: z.number().positive('Preço deve ser maior que zero'),
-  size: z.string().max(20).optional().default(''),
+  size: z.string().max(20).default(''),
   categoryId: z.number().int().positive('Selecione uma categoria'),
 })
 export type ProductUploadFormData = z.infer<typeof productUploadSchema>
+export type ProductUploadFormInput = z.input<typeof productUploadSchema>
