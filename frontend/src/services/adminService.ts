@@ -7,6 +7,11 @@ export interface ResetPasswordDto {
   newPassword: string
 }
 
+export interface InviteValidationResponse {
+  valid: boolean
+  email: string
+}
+
 export const adminService = {
   async getAll(): Promise<AdminUser[]> {
     const { data } = await api.get<AdminUser[]>('/admin')
@@ -18,7 +23,7 @@ export const adminService = {
     return data
   },
 
-  async create(dto: CreateAdminDto): Promise<AdminUser> {
+  async create(dto: CreateAdminDto & { inviteToken: string }): Promise<AdminUser> {
     const { data } = await api.post<AdminUser>('/admin', dto)
     return data
   },
@@ -29,22 +34,28 @@ export const adminService = {
   },
 
   /**
-   * POST /api/admin/recover-password
-   * Gera um código numérico de 6 dígitos, armazena no Redis por 15 min
-   * e envia por e-mail para o administrador.
-   * Responde: { message: 'Código de recuperação enviado para o e-mail informado' }
+   * POST /api/admin/invite (autenticado)
+   * Envia convite por e-mail para um novo administrador.
    */
+  async sendInvite(email: string): Promise<{ message: string }> {
+    const { data } = await api.post<{ message: string }>('/admin/invite', { email })
+    return data
+  },
+
+  /**
+   * POST /api/admin/invite/validate
+   * Verifica se o token de convite é válido e retorna o e-mail vinculado.
+   */
+  async validateInviteToken(token: string): Promise<InviteValidationResponse> {
+    const { data } = await api.post<InviteValidationResponse>('/admin/invite/validate', { token })
+    return data
+  },
+
   async recoverPassword(email: string): Promise<{ message: string }> {
     const { data } = await api.post<{ message: string }>('/admin/recover-password', { email })
     return data
   },
 
-  /**
-   * POST /api/admin/reset-password
-   * Valida o código recebido por e-mail, verifica os requisitos de senha
-   * e persiste a nova senha com hash bcrypt.
-   * Responde: { message: 'Senha redefinida com sucesso' }
-   */
   async resetPassword(dto: ResetPasswordDto): Promise<{ message: string }> {
     const { data } = await api.post<{ message: string }>('/admin/reset-password', dto)
     return data

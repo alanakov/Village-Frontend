@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom';
-import { Leaf, Heart, MessageCircle } from 'lucide-react';
-import { useInstitutionalStore } from '@/store/institutionalStore';
-import { buildWhatsAppUrl } from '@/utils/helpers';
+import { Link } from 'react-router-dom'
+import { Leaf, Heart, MessageCircle, Lock } from 'lucide-react'
+import { useInstitutionalStore } from '@/store/institutionalStore'
+import { buildWhatsAppUrl } from '@/utils/helpers'
 
 export function Footer() {
-  const { content } = useInstitutionalStore();
-  const year = new Date().getFullYear();
+  const { content } = useInstitutionalStore()
+  const year = new Date().getFullYear()
 
   return (
     <footer className="bg-[var(--primary)] text-[var(--primary-foreground)]">
@@ -59,11 +59,22 @@ export function Footer() {
 
         <div className="mt-10 pt-6 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm opacity-60">
           <p>© {year} Aldeia Cultura Viva. Todos os direitos reservados.</p>
-          <p className="flex items-center gap-1">
-            Feito com <Heart className="w-3 h-3 fill-current" /> pela comunidade
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="flex items-center gap-1">
+              Feito com <Heart className="w-3 h-3 fill-current" /> pela comunidade
+            </p>
+            {/* Link discreto para acesso administrativo */}
+            <Link
+              to="/admin"
+              className="flex items-center gap-1 hover:opacity-100 transition-opacity"
+              aria-label="Acesso à área administrativa"
+            >
+              <Lock className="w-3 h-3" />
+              <span className="text-xs">Área administrativa</span>
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
-  );
+  )
 }
