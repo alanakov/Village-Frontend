@@ -1,8 +1,9 @@
-import { MessageCircle, Eye } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatPrice, buildWhatsAppUrl } from '@/utils/helpers';
 import { useInstitutionalStore } from '@/store/institutionalStore';
+import { getUploadUrl } from '@/services/api';
 import type { Product } from '@/types';
 
 interface ProductCardProps {
@@ -21,7 +22,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <article className="bg-[var(--card)] rounded-2xl overflow-hidden border border-[var(--border)] card-hover flex flex-col">
       <div className="relative overflow-hidden aspect-[4/3]">
         <img
-          src={product.imageUrl}
+          src={getUploadUrl(product.imageUrl)}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
           loading="lazy"

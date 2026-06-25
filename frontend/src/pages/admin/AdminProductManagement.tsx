@@ -15,13 +15,12 @@ import { Badge } from '@/components/ui/Badge'
 import { ImageUploadInput } from '@/components/ui/ImageUploadInput'
 import { formatPrice, getApiErrorMessage } from '@/utils/helpers'
 import { getUploadUrl } from '@/services/api'
-import { SectionName } from '@/types'
 import type { Product, CreateProductDto } from '@/types'
 import toast from 'react-hot-toast'
 
 export function AdminProductManagement() {
   const { products, categories, loading, create, update, remove } = useProducts()
-  const imageUpload = useImageUpload(SectionName.crafts)
+  const imageUpload = useImageUpload()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Product | null>(null)
