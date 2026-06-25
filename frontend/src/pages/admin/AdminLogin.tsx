@@ -81,12 +81,21 @@ export function AdminLogin() {
 
             {/* Password */}
             <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="password"
-                className="text-sm font-semibold text-[var(--foreground)] font-ui"
-              >
-                Senha <span className="text-[var(--destructive)]">*</span>
-              </label>
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="text-sm font-semibold text-[var(--foreground)] font-ui"
+                >
+                  Senha <span className="text-[var(--destructive)]">*</span>
+                </label>
+                {/* Link "Esqueceu a senha?" — inicia o fluxo de recuperação */}
+                <Link
+                  to="/admin/recuperar-senha"
+                  className="text-xs text-[var(--primary)] font-ui font-semibold hover:underline"
+                >
+                  Esqueceu a senha?
+                </Link>
+              </div>
               <div className="relative">
                 <input
                   id="password"
