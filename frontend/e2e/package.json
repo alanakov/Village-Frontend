@@ -1,0 +1,22 @@
+{
+  "name": "village-e2e",
+  "version": "1.0.0",
+  "description": "Testes E2E para o projeto Village (Aldeia Cultura Viva) com Playwright",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:auth": "playwright test tests/auth/login.spec.ts --project=authenticated",
+    "test:products": "playwright test tests/products/ --project=authenticated",
+    "test:public": "playwright test tests/public/ --project=public",
+    "test:setup": "playwright test tests/auth/auth.setup.ts --project=auth-setup",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "test:ci": "playwright test --reporter=github"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.20.0"
+  }
+}
