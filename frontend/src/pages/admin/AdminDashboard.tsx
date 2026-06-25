@@ -1,7 +1,10 @@
-import { Package, FolderOpen, TrendingUp, Layers } from 'lucide-react'
+import { useState } from 'react'
+import { Package, FolderOpen, TrendingUp, Layers, UserPlus } from 'lucide-react'
 import { StatCard } from '@/components/admin/StatCard'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { Button } from '@/components/ui/Button'
+import { InviteAdminModal } from '@/components/admin/InviteAdminModal'
 import { useProducts } from '@/hooks/useProducts'
 import { useCategories } from '@/hooks/useCategories'
 import { useSections } from '@/hooks/useSections'
@@ -13,6 +16,7 @@ export function AdminDashboard() {
   const { categories, loading: loadingCats } = useCategories()
   const { sections, loading: loadingSections } = useSections()
   const { user } = useAuthStore()
+  const [inviteOpen, setInviteOpen] = useState(false)
 
   const totalValue = products.reduce((acc, p) => acc + Number(p.price), 0)
   const recentProducts = [...products]
@@ -26,13 +30,18 @@ export function AdminDashboard() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="font-display text-3xl font-bold text-[var(--primary)] mb-1">
-          Dashboard
-        </h1>
-        <p className="text-[var(--muted-foreground)] font-ui text-sm">
-          Bem-vindo, {user?.name ?? 'Administrador'} · Visão geral do sistema
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="font-display text-3xl font-bold text-[var(--primary)] mb-1">
+            Dashboard
+          </h1>
+          <p className="text-[var(--muted-foreground)] font-ui text-sm">
+            Bem-vindo, {user?.name ?? 'Administrador'} · Visão geral do sistema
+          </p>
+        </div>
+        <Button variant="ghost" onClick={() => setInviteOpen(true)}>
+          <UserPlus className="w-4 h-4" /> Convidar administrador
+        </Button>
       </div>
 
       {/* Stats */}
@@ -145,6 +154,8 @@ export function AdminDashboard() {
           </div>
         )}
       </div>
+
+      <InviteAdminModal open={inviteOpen} onClose={() => setInviteOpen(false)} />
     </div>
   )
 }
