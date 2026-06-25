@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react'
 import { publicApi } from '@/lib/publicApi'
-import type { Section, SectionImage, SectionButton } from '@/types'
+import type { Section, SectionImage, SectionCard, SectionContent, ContentType } from '@/types'
 import { getUploadUrl } from '@/services/api'
 
 export interface PublicContentState {
   sections: Section[]
   loading: boolean
-  getSection: (name: string) => Section | undefined
-  getContent: (sectionName: string, type?: string) => string
-  getStats: (sectionName: string) => Array<{ title: string; value: string }>
-  getCards: (sectionName: string) => Array<{ title: string; description: string; icon: string }>
-  getImages: (sectionName: string) => SectionImage[]
-  getButtons: (sectionName: string) => SectionButton[]
+  getSection:    (name: string) => Section | undefined
+  getCards:      (sectionName: string) => SectionCard[]
+  getImages:     (sectionName: string) => SectionImage[]
   getFirstImage: (sectionName: string) => string
+  /** Returns the text of the first content matching `type`, or '' if not found */
+  getContent:    (sectionName: string, type: ContentType) => string
+  getContents:   (sectionName: string) => SectionContent[]
 }
 
 export function usePublicContent(): PublicContentState {
@@ -30,39 +30,14 @@ export function usePublicContent(): PublicContentState {
   const getSection = (name: string): Section | undefined =>
     sections.find((s) => s.name === name)
 
-  const getContent = (sectionName: string, type = 'P1'): string => {
-    const section = getSection(sectionName)
-    if (!section?.contents?.length) return ''
-    return section.contents.find((c) => c.type === type)?.content ?? ''
-  }
+  const getCards = (sectionName: string): SectionCard[] =>
+    getSection(sectionName)?.cards ?? []
 
-  const getStats = (sectionName: string) => {
-    const section = getSection(sectionName)
-    if (!section?.stats?.length) return []
-    return section.stats.map((s) => ({ title: s.title, value: s.value }))
-  }
+  const getImages = (sectionName: string): SectionImage[] =>
+    getSection(sectionName)?.images ?? []
 
-  const getCards = (sectionName: string) => {
-    const section = getSection(sectionName)
-    if (!section?.cards?.length) return []
-    return section.cards.map((c) => ({
-      title: c.title,
-      description: c.description,
-      icon: c.icon,
-    }))
-  }
-
-  const getImages = (sectionName: string): SectionImage[] => {
-    const section = getSection(sectionName)
-    if (!section?.images?.length) return []
-    return section.images
-  }
-
-  const getButtons = (sectionName: string): SectionButton[] => {
-    const section = getSection(sectionName)
-    if (!section?.buttons?.length) return []
-    return section.buttons
-  }
+  const getContents = (sectionName: string): SectionContent[] =>
+    getSection(sectionName)?.contents ?? []
 
   const getFirstImage = (sectionName: string): string => {
     const images = getImages(sectionName)
@@ -70,15 +45,11 @@ export function usePublicContent(): PublicContentState {
     return getUploadUrl(images[0].imageUrl)
   }
 
-  return {
-    sections,
-    loading,
-    getSection,
-    getContent,
-    getStats,
-    getCards,
-    getImages,
-    getButtons,
-    getFirstImage,
+  const getContent = (sectionName: string, type: ContentType): string => {
+    const section = getSection(sectionName)
+    const found = section?.contents?.find((c) => c.type === type)
+    return found?.content ?? ''
   }
+
+  return { sections, loading, getSection, getCards, getImages, getFirstImage, getContent, getContents }
 }

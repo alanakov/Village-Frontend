@@ -1,5 +1,5 @@
 import api from './api'
-import type { SectionCard, CardDto } from '@/types'
+import type { SectionCard, CardDto, CreateCardDto } from '@/types'
 
 export const cardService = {
   async getAll(): Promise<SectionCard[]> {
@@ -9,6 +9,11 @@ export const cardService = {
 
   async getById(id: number): Promise<SectionCard> {
     const { data } = await api.get<SectionCard>(`/card/${id}`)
+    return data
+  },
+
+  async create(dto: CreateCardDto): Promise<SectionCard> {
+    const { data } = await api.post<SectionCard>('/card', dto)
     return data
   },
 

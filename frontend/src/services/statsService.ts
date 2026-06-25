@@ -1,5 +1,5 @@
 import api from './api'
-import type { SectionStat, StatsDto } from '@/types'
+import type { SectionStat, StatsDto, CreateStatDto } from '@/types'
 
 export const statsService = {
   async getAll(): Promise<SectionStat[]> {
@@ -9,6 +9,11 @@ export const statsService = {
 
   async getById(id: number): Promise<SectionStat> {
     const { data } = await api.get<SectionStat>(`/stats/${id}`)
+    return data
+  },
+
+  async create(dto: CreateStatDto): Promise<SectionStat> {
+    const { data } = await api.post<SectionStat>('/stats', dto)
     return data
   },
 

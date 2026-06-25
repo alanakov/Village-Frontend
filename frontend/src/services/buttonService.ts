@@ -1,5 +1,5 @@
 import api from './api'
-import type { SectionButton, ButtonDto } from '@/types'
+import type { SectionButton, ButtonDto, CreateButtonDto } from '@/types'
 
 export const buttonService = {
   async getAll(): Promise<SectionButton[]> {
@@ -9,6 +9,11 @@ export const buttonService = {
 
   async getById(id: number): Promise<SectionButton> {
     const { data } = await api.get<SectionButton>(`/button/${id}`)
+    return data
+  },
+
+  async create(dto: CreateButtonDto): Promise<SectionButton> {
+    const { data } = await api.post<SectionButton>('/button', dto)
     return data
   },
 

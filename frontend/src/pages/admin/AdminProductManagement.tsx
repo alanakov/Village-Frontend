@@ -21,7 +21,7 @@ import toast from 'react-hot-toast'
 
 export function AdminProductManagement() {
   const { products, categories, loading, create, update, remove } = useProducts()
-  const imageUpload = useImageUpload(SectionName.aboutProducts)
+  const imageUpload = useImageUpload(SectionName.crafts)
 
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Product | null>(null)
