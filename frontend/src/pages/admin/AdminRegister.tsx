@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore'
 import { getApiErrorMessage } from '@/utils/helpers'
 import { Button } from '@/components/ui/Button'
 import { PasswordStrength } from '@/components/admin/PasswordStrength'
+import { maskEmail, maskPhone } from '@/utils/masks'
 
 function FormField({
   id,
@@ -120,6 +121,25 @@ export function AdminRegister() {
 
   if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />
 
+  const emailReg = register('email')
+  const phoneReg = register('phone')
+
+  const maskedEmailReg = {
+    ...emailReg,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+      e.target.value = maskEmail(e.target.value)
+      emailReg.onChange(e)
+    },
+  }
+
+  const maskedPhoneReg = {
+    ...phoneReg,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+      e.target.value = maskPhone(e.target.value)
+      phoneReg.onChange(e)
+    },
+  }
+
   const onSubmit = async (data: CreateAdminFormData) => {
     setServerError('')
     try {
@@ -184,7 +204,7 @@ export function AdminRegister() {
                 autoComplete="email"
                 placeholder="admin@aldeia.com"
                 error={errors.email?.message}
-                registration={register('email')}
+                registration={maskedEmailReg}
               />
               <FormField
                 id="phone"
@@ -193,7 +213,7 @@ export function AdminRegister() {
                 autoComplete="tel"
                 placeholder="(11) 99999-9999"
                 error={errors.phone?.message}
-                registration={register('phone')}
+                registration={maskedPhoneReg}
               />
 
               <div>

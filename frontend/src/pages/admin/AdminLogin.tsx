@@ -8,6 +8,7 @@ import { authService } from '@/services/authService'
 import { useAuthStore } from '@/store/authStore'
 import { getApiErrorMessage } from '@/utils/helpers'
 import { Button } from '@/components/ui/Button'
+import { maskEmail } from '@/utils/masks'
 
 export function AdminLogin() {
   const { isAuthenticated, setAuth } = useAuthStore()
@@ -22,6 +23,8 @@ export function AdminLogin() {
   } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) })
 
   if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />
+
+  const emailReg = register('email')
 
   const onSubmit = async (data: LoginFormData) => {
     setServerError('')
@@ -65,7 +68,11 @@ export function AdminLogin() {
                 type="email"
                 autoComplete="email"
                 placeholder="admin@aldeia.com"
-                {...register('email')}
+                {...emailReg}
+                onChange={(e) => {
+                  e.target.value = maskEmail(e.target.value)
+                  emailReg.onChange(e)
+                }}
                 className={`w-full px-4 py-3 rounded-xl border bg-white font-ui text-[var(--foreground)] focus:outline-none focus:ring-2 transition-all ${
                   errors.email
                     ? 'border-[var(--destructive)] focus:ring-[var(--destructive)]'

@@ -38,7 +38,7 @@ export const createAdminSchema = z
     phone: z
       .string()
       .min(1, 'Telefone é obrigatório')
-      .max(20, 'Telefone muito longo'),
+      .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, 'Telefone inválido. Use o formato (XX) XXXXX-XXXX'),
     password: z
       .string()
       .min(8, 'A senha deve ter no mínimo 8 caracteres')

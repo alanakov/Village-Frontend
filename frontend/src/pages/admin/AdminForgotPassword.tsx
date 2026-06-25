@@ -8,6 +8,7 @@ import { adminService } from '@/services/adminService'
 import { useAuthStore } from '@/store/authStore'
 import { getApiErrorMessage } from '@/utils/helpers'
 import { Button } from '@/components/ui/Button'
+import { maskEmail } from '@/utils/masks'
 
 export function AdminForgotPassword() {
   const { isAuthenticated } = useAuthStore()
@@ -23,6 +24,8 @@ export function AdminForgotPassword() {
 
   // Usuário já autenticado não precisa desta tela
   if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />
+
+  const emailReg = register('email')
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setServerError('')
@@ -123,7 +126,11 @@ export function AdminForgotPassword() {
                       type="email"
                       autoComplete="email"
                       placeholder="admin@aldeia.com"
-                      {...register('email')}
+                      {...emailReg}
+                      onChange={(e) => {
+                        e.target.value = maskEmail(e.target.value)
+                        emailReg.onChange(e)
+                      }}
                       className={`w-full pl-11 pr-4 py-3 rounded-xl border bg-white font-ui text-[var(--foreground)] focus:outline-none focus:ring-2 transition-all ${
                         errors.email
                           ? 'border-[var(--destructive)] focus:ring-[var(--destructive)]'

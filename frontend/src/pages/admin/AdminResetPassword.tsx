@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ChangeEvent } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,6 +10,7 @@ import { getApiErrorMessage } from '@/utils/helpers'
 import { Button } from '@/components/ui/Button'
 import { PasswordStrength } from '@/components/admin/PasswordStrength'
 import toast from 'react-hot-toast'
+import { maskEmail } from '@/utils/masks'
 
 // ── Sub-componente reutilizado: campo de texto comum ──────────────────────────
 
@@ -133,6 +134,15 @@ export function AdminResetPassword() {
   // Usuário já autenticado não precisa desta tela
   if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />
 
+  const emailReg = register('email')
+  const maskedEmailReg = {
+    ...emailReg,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+      e.target.value = maskEmail(e.target.value)
+      emailReg.onChange(e)
+    },
+  }
+
   const onSubmit = async (data: ResetPasswordFormData) => {
     setServerError('')
     try {
@@ -214,7 +224,7 @@ export function AdminResetPassword() {
                   autoComplete="email"
                   placeholder="admin@aldeia.com"
                   error={errors.email?.message}
-                  registration={register('email')}
+                  registration={maskedEmailReg}
                 />
 
                 {/* Código de recuperação */}
