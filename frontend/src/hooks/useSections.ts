@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { sectionService } from '@/services/sectionService'
 import { imageService } from '@/services/imageService'
-import type { Section, SectionImage, UpdateSectionDto } from '@/types'
+import type {
+  Section,
+  SectionImage,
+  CreateSectionDto,
+  UpdateSectionDto,
+  CreateFullSectionDto,
+} from '@/types'
 
 function mergeImages(sections: Section[], images: SectionImage[]): Section[] {
   const bySection = images.reduce<Record<number, SectionImage[]>>((acc, img) => {
@@ -9,7 +15,6 @@ function mergeImages(sections: Section[], images: SectionImage[]): Section[] {
     acc[img.sectionId].push(img)
     return acc
   }, {})
-
   return sections.map((s) => ({ ...s, images: bySection[s.idSection] ?? [] }))
 }
 
@@ -34,13 +39,47 @@ export function useSections() {
     }
   }, [])
 
-  useEffect(() => { fetchAll() }, [fetchAll])
+  useEffect(() => {
+    fetchAll()
+  }, [fetchAll])
 
-  const update = async (id: number, dto: UpdateSectionDto): Promise<Section> => {
+  // ── Section CRUD ──────────────────────────────────────────────────────────
+
+  const createSimple = async (dto: CreateSectionDto): Promise<Section> => {
+    const created = await sectionService.create(dto)
+    await fetchAll()
+    return created
+  }
+
+  const createFull = async (
+    dto: CreateFullSectionDto
+  ): Promise<{ message: string; section: Section }> => {
+    const result = await sectionService.createFull(dto)
+    await fetchAll()
+    return result
+  }
+
+  const updateSection = async (id: number, dto: UpdateSectionDto): Promise<Section> => {
     const updated = await sectionService.update(id, dto)
-    setSections((prev) => prev.map((s) => (s.idSection === id ? { ...s, ...updated } : s)))
+    // Refresh full data to reflect any changes
+    await fetchAll()
     return updated
   }
 
-  return { sections, loading, error, refetch: fetchAll, update }
+  const deleteSection = (id: number): void => {
+    // Optimistic local update — caller handles API call
+    setSections((prev) => prev.filter((s) => s.idSection !== id))
+  }
+
+  return {
+    sections,
+    loading,
+    error,
+    refetch: fetchAll,
+    // Section operations
+    createSimple,
+    createFull,
+    updateSection,
+    deleteSection,
+  }
 }

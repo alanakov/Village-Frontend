@@ -5,24 +5,22 @@ import { ProductCardSkeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { usePublicProducts } from '@/hooks/usePublicProducts'
 import { usePublicContent } from '@/hooks/usePublicContent'
-
-// Nome da seção — exatamente como está no enum do backend
-const S_PRODUCTS = 'Sobre os Produtos'
+import { SectionName } from '@/types'
 
 export function Products() {
-  const { products, loading } = usePublicProducts()
-  const { getSection, getContent } = usePublicContent()
+  const { products, loading, error } = usePublicProducts()
+  const { getSection, getContents }  = usePublicContent()
 
-  const [search, setSearch] = useState('')
+  const [search, setSearch]               = useState('')
   const [activeCategory, setActiveCategory] = useState<number | null>(null)
 
-  // Título e subtítulo da página vêm da seção "Sobre os Produtos"
-  const productsSection = getSection(S_PRODUCTS)
-  const pageTitle       = productsSection?.title ?? 'Nossa Coleção'
-  const pageSubtitle    = getContent(S_PRODUCTS, 'P1') ||
-    'Cada peça é única, feita à mão com materiais naturais e técnicas ancestrais'
+  // Section data — uses SectionName.crafts = 'Artesanato'
+  const productsSection = getSection(SectionName.crafts)
+  const pageTitle       = productsSection?.title    ?? 'Nossa Coleção'
+  const pageSubtitle    = getContents(SectionName.crafts)[0]?.content
+    ?? 'Cada peça é única, feita à mão com materiais naturais e técnicas ancestrais'
 
-  // Constrói lista de categorias únicas a partir dos produtos reais
+  // Build unique category list from real products
   const categories = useMemo(() => {
     const seen = new Map<number, string>()
     for (const p of products) {
@@ -78,7 +76,7 @@ export function Products() {
         </div>
       </div>
 
-      {/* Category Pills */}
+      {/* Category pills */}
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
           <button
@@ -107,27 +105,40 @@ export function Products() {
         </div>
       )}
 
+      {/* Error state */}
+      {error && (
+        <div className="text-center py-12">
+          <p className="text-[var(--muted-foreground)] font-ui">{error}</p>
+        </div>
+      )}
+
       {/* Grid */}
-      {loading ? (
+      {!error && loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Array.from({ length: 8 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : !error && filtered.length === 0 ? (
         <EmptyState
-          title="Nenhum produto encontrado"
-          description="Tente buscar por outros termos ou limpar os filtros."
+          title={products.length === 0 ? 'Nenhum produto cadastrado' : 'Nenhum produto encontrado'}
+          description={
+            products.length === 0
+              ? 'Os produtos cadastrados pelo administrador aparecerão aqui.'
+              : 'Tente buscar por outros termos ou limpar os filtros.'
+          }
           action={
-            <button
-              onClick={() => { setSearch(''); setActiveCategory(null) }}
-              className="text-[var(--primary)] font-semibold underline font-ui"
-            >
-              Limpar filtros
-            </button>
+            products.length > 0 ? (
+              <button
+                onClick={() => { setSearch(''); setActiveCategory(null) }}
+                className="text-[var(--primary)] font-semibold underline font-ui"
+              >
+                Limpar filtros
+              </button>
+            ) : undefined
           }
         />
-      ) : (
+      ) : !error ? (
         <>
           <p className="text-sm text-[var(--muted-foreground)] mb-6 font-ui">
             {filtered.length} {filtered.length === 1 ? 'produto encontrado' : 'produtos encontrados'}
@@ -138,7 +149,7 @@ export function Products() {
             ))}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   )
 }

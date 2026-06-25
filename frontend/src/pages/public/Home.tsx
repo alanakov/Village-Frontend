@@ -1,57 +1,50 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Leaf, Users, Star, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { ProductCard } from '@/components/public/ProductCard'
 import { ProductCardSkeleton } from '@/components/ui/Skeleton'
 import { Button } from '@/components/ui/Button'
 import { usePublicProducts } from '@/hooks/usePublicProducts'
 import { usePublicContent } from '@/hooks/usePublicContent'
 import { useInstitutionalStore } from '@/store/institutionalStore'
-
-// Nomes das seções — exatamente como estão no enum do backend
-const S_HOME    = 'Página Inicial'
-const S_ABOUT   = 'Sobre Nós'
-const S_IMPACT  = 'Impacto Social'
+import { SectionName } from '@/types'
+import { getUploadUrl } from '@/services/api'
+import { resolveIcon } from '@/utils/iconMapper'
 
 export function Home() {
-  const { products, loading } = usePublicProducts()
-  const { content: local } = useInstitutionalStore()
-  const { getContent, getStats, getSection, getFirstImage } = usePublicContent()
+  const { products, loading }  = usePublicProducts()
+  const { content: local }     = useInstitutionalStore()
+  const { getSection, getCards, getImages } = usePublicContent()
 
   const featured = products.slice(0, 6)
 
-  // ── Hero ──────────────────────────────────────────────────────────────────
-  // P1 = título principal, P2 = subtítulo
-  const heroTitle    = getContent(S_HOME, 'P1') || local.homeTitle
-  const heroSubtitle = getContent(S_HOME, 'P2') || local.homeSubtitle
-  // Imagem do hero: primeira imagem da seção "Página Inicial", senão localStorage
-  const heroBanner   = getFirstImage(S_HOME) || local.heroBanner
+  // ── Principal ─────────────────────────────────────────────────────────────
+  const heroSection   = getSection(SectionName.home)
+  const heroTitle     = heroSection?.title    ?? local.homeTitle
+  const heroSubtitle  = heroSection?.subtitle ?? local.homeSubtitle
 
   // ── Quem Somos ────────────────────────────────────────────────────────────
-  const aboutText  = getContent(S_ABOUT, 'P1') || local.aboutText
-  // Imagem lateral: primeira imagem de "Sobre Nós"
-  const aboutImage = getFirstImage(S_ABOUT)
+  const aboutSection  = getSection(SectionName.aboutUs)
+  const aboutSubtitle = aboutSection?.subtitle ?? ''
+  const aboutImages   = getImages(SectionName.aboutUs)
+  // Only show section image when one has been uploaded — no hardcoded fallback
+  const aboutImageUrl = aboutImages.length > 0 ? getUploadUrl(aboutImages[0].imageUrl) : null
+
+  // ── Artesanato em Destaque ─────────────────────────────────────────────────
+  const artDestSection  = getSection(SectionName.featuredCraft)
+  const artDestSubtitle = artDestSection?.subtitle ?? 'Peças únicas feitas à mão com dedicação e amor'
 
   // ── Impacto Social ────────────────────────────────────────────────────────
-  const impactSection  = getSection(S_IMPACT)
-  const impactTitle    = impactSection?.title ?? 'Impacto Social e Cultural'
-  const impactSubtitle = getContent(S_IMPACT, 'P1') ||
-    'O artesanato é uma forma essencial de preservação cultural, educação dos jovens e manutenção da nossa conexão com a natureza e os ancestrais.'
-  const impactStats    = getStats(S_IMPACT)
-
-  // Fallback de stats quando a seção ainda não foi cadastrada
-  const defaultStats = [
-    { value: '500+', label: 'Peças Produzidas',       icon: Star  },
-    { value: '50+',  label: 'Artesãos na Comunidade', icon: Users },
-    { value: '10+',  label: 'Técnicas Tradicionais',  icon: Leaf  },
-  ]
+  const impactoSection  = getSection(SectionName.socialImpact)
+  const impactoSubtitle = impactoSection?.subtitle ?? 'O artesanato preserva nossa cultura e identidade.'
+  const impactoCards    = getCards(SectionName.socialImpact)
 
   return (
     <div>
-      {/* ── Hero ── */}
+      {/* ── Hero / Principal ────────────────────────────────────────────── */}
       <section className="relative min-h-[88vh] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroBanner})` }}
+          style={{ backgroundImage: `url(${local.heroBanner})` }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--primary)]/70 via-[var(--primary)]/60 to-[var(--secondary)]/75" />
         </div>
@@ -64,14 +57,12 @@ export function Home() {
                 Cultura · Tradição · Ancestralidade
               </span>
             </div>
-
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl mb-6 leading-tight font-bold drop-shadow-lg">
               {heroTitle}
             </h1>
             <p className="text-lg md:text-xl mb-10 leading-relaxed opacity-90 max-w-2xl mx-auto">
               {heroSubtitle}
             </p>
-
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/produtos"
@@ -89,7 +80,6 @@ export function Home() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
           <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2">
             <div className="w-1 h-2 bg-white/60 rounded-full" />
@@ -97,52 +87,62 @@ export function Home() {
         </div>
       </section>
 
-      {/* ── Quem Somos ── */}
-      <section className="container mx-auto px-4 py-24">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-2 h-2 bg-[var(--secondary)] rounded-full" />
-              <span className="text-[var(--secondary)] text-sm font-semibold font-ui uppercase tracking-widest">
-                Quem Somos
-              </span>
+      {/* ── Quem Somos — only render when section exists ─────────────────── */}
+      {aboutSection && (
+        <section className="container mx-auto px-4 py-24">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="w-2 h-2 bg-[var(--secondary)] rounded-full" />
+                <span className="text-[var(--secondary)] text-sm font-semibold font-ui uppercase tracking-widest">
+                  Quem Somos
+                </span>
+              </div>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-[var(--foreground)] mb-6 decorative-underline">
+                Quem Somos?
+              </h2>
+              {aboutSubtitle && (
+                <div className="sidebar-accent mb-6 mt-10">
+                  <p className="text-lg text-[var(--foreground)] leading-relaxed">
+                    {aboutSubtitle}
+                  </p>
+                </div>
+              )}
+              {aboutSection.contents?.map((c) => (
+                <p key={c.idContent} className="text-[var(--muted-foreground)] leading-relaxed mb-4">
+                  {c.content}
+                </p>
+              ))}
+              <Link
+                to="/cultura"
+                className="mt-8 inline-flex items-center gap-2 text-[var(--primary)] font-semibold font-ui hover:gap-3 transition-all duration-200"
+              >
+                Conheça nossa cultura <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-[var(--foreground)] mb-6 decorative-underline">
-              {getSection(S_ABOUT)?.title ?? 'História Viva, Memória que Pulsa'}
-            </h2>
-            <div className="sidebar-accent mb-6 mt-10">
-              <p className="text-lg text-[var(--foreground)] leading-relaxed">
-                {getSection(S_ABOUT)?.subtitle ??
-                  'Nossa aldeia é um território de memória viva, onde cada dia é um elo entre o passado ancestral e o futuro que construímos juntos.'}
-              </p>
-            </div>
-            <p className="text-[var(--muted-foreground)] leading-relaxed mb-6">
-              {aboutText}
-            </p>
-            <p className="text-[var(--muted-foreground)] leading-relaxed">
-              A terra que habitamos não é apenas um lugar geográfico — é parte de quem somos,
-              entrelaçada com nossa identidade. Respeitamos os ciclos naturais, honramos nossos
-              ancestrais.
-            </p>
-            <Link
-              to="/cultura"
-              className="mt-8 inline-flex items-center gap-2 text-[var(--primary)] font-semibold font-ui hover:gap-3 transition-all duration-200"
-            >
-              Conheça nossa cultura <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
-            <img
-              src={aboutImage || 'https://images.unsplash.com/photo-1758517821242-3d9d73ef550b?w=800&q=80'}
-              alt="Comunidade da aldeia reunida"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-        </div>
-      </section>
 
-      {/* ── Produtos em Destaque ── */}
+            {/* Image — only when uploaded, no fallback */}
+            {aboutImageUrl ? (
+              <div className="rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
+                <img
+                  src={aboutImageUrl}
+                  alt="Comunidade da aldeia"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div className="rounded-3xl bg-[var(--muted)] border-2 border-dashed border-[var(--border)] aspect-[4/5] flex items-center justify-center">
+                <p className="text-[var(--muted-foreground)] text-sm font-ui text-center px-6">
+                  Imagem não configurada.<br />Adicione uma imagem no painel administrativo.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── Artesanato em Destaque ───────────────────────────────────────── */}
       <section className="bg-[var(--muted)] py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -157,7 +157,7 @@ export function Home() {
             </h2>
             <div className="w-20 h-1 bg-[var(--accent)] mx-auto mb-6 rounded-full" />
             <p className="text-[var(--muted-foreground)] text-lg max-w-2xl mx-auto">
-              Peças únicas feitas à mão com dedicação e amor, carregando a alma de nossa tradição
+              {artDestSubtitle}
             </p>
           </div>
 
@@ -177,43 +177,45 @@ export function Home() {
         </div>
       </section>
 
-      {/* ── Impacto Social ── */}
-      <section className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary)]/85 text-white py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto text-center">
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
-              {impactTitle}
-            </h2>
-            <p className="text-lg opacity-90 max-w-2xl mx-auto mb-16">
-              {impactSubtitle}
-            </p>
+      {/* ── Impacto Social ───────────────────────────────────────────────── */}
+      {impactoSection && (
+        <section className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary)]/85 text-white py-24">
+          <div className="container mx-auto px-4">
+            <div className="max-w-5xl mx-auto text-center">
+              <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
+                Impacto Social
+              </h2>
+              {impactoSubtitle && (
+                <p className="text-lg opacity-90 max-w-2xl mx-auto mb-16">
+                  {impactoSubtitle}
+                </p>
+              )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
-              {impactStats.length > 0
-                ? impactStats.map(({ value, title }) => (
-                    <div key={title} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                      <div className="font-display text-5xl font-bold mb-2">{value}</div>
-                      <div className="opacity-80 font-ui">{title}</div>
-                    </div>
-                  ))
-                : defaultStats.map(({ value, label, icon: Icon }) => (
-                    <div key={label} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
-                      <Icon className="w-8 h-8 mx-auto mb-3 opacity-70" />
-                      <div className="font-display text-5xl font-bold mb-2">{value}</div>
-                      <div className="opacity-80 font-ui">{label}</div>
-                    </div>
-                  ))}
+              {impactoCards.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
+                  {impactoCards.map((card, i) => {
+                    const CardIcon = resolveIcon(card.icon, i)
+                    return (
+                      <div key={card.idCard} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                        <CardIcon className="w-10 h-10 mx-auto mb-4 opacity-90" />
+                        <div className="font-display text-3xl font-bold mb-2">{card.title}</div>
+                        <div className="opacity-80 font-ui text-sm">{card.description}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              <Link
+                to="/cultura"
+                className="inline-flex items-center gap-2 bg-white text-[var(--primary)] px-10 py-4 rounded-2xl font-semibold font-ui hover:scale-105 transition-all duration-300 shadow-xl"
+              >
+                Conheça mais sobre nossa cultura <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
-
-            <Link
-              to="/cultura"
-              className="inline-flex items-center gap-2 bg-white text-[var(--primary)] px-10 py-4 rounded-2xl font-semibold font-ui hover:scale-105 transition-all duration-300 shadow-xl"
-            >
-              Conheça mais sobre nossa cultura <ArrowRight className="w-4 h-4" />
-            </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }

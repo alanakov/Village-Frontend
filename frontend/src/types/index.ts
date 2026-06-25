@@ -2,7 +2,6 @@
 
 export type UserType = 'ADMIN'
 
-/** Shape retornada pelo backend em login/profile */
 export interface AuthUserResponse {
   idUser: number
   name: string
@@ -10,14 +9,12 @@ export interface AuthUserResponse {
   userType: UserType
 }
 
-/** POST /api/auth/login → { message, token, user } */
 export interface LoginResponse {
   message: string
   token: string
   user: AuthUserResponse
 }
 
-/** GET /api/auth/profile → { message, user } */
 export interface ProfileResponse {
   message: string
   user: AuthUserResponse
@@ -70,13 +67,8 @@ export interface Category {
   updatedAt?: string
 }
 
-export interface CreateCategoryDto {
-  name: string
-}
-
-export interface UpdateCategoryDto {
-  name?: string
-}
+export interface CreateCategoryDto { name: string }
+export interface UpdateCategoryDto { name?: string }
 
 // ─── Product ──────────────────────────────────────────────────────────────────
 
@@ -113,25 +105,30 @@ export interface UpdateProductDto {
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
-export const SectionName = {
-  homePage: 'Página Inicial',
-  aboutUs: 'Sobre Nós',
-  socialImpact: 'Impacto Social',
-  identity: 'Identidade',
-  values: 'Valores',
-  traditionalTechniques: 'Técnicas Tradicionais',
-  preserve: 'Preserve',
-  doubts: 'Dúvidas',
-  aboutProducts: 'Sobre os Produtos',
-  guarantee: 'Garantia',
-} as const
-export type SectionName = typeof SectionName[keyof typeof SectionName]
+/**
+ * Section name enum — must mirror exactly the SectionName enum in the backend.
+ * Keys are English identifiers (internal use only).
+ * Values are the strings persisted in the DB and exchanged with the API — do not change them.
+ */
+export enum SectionName {
+  // Home
+  home             = 'Principal',
+  aboutUs          = 'Quem Somos',
+  featuredCraft    = 'Artesanato em Destaque',
+  socialImpact     = 'Impacto Social',
+  // Nossa História
+  identity         = 'Identidade',
+  cultureDimensions= 'Dimensões da Nossa Cultura',
+  communityMoments = 'Momentos da Nossa Comunidade',
+  // Artesanato
+  crafts           = 'Artesanato',
+}
 
 export interface Section {
   idSection: number
   name: SectionName
   title: string
-  subtitle: string
+  subtitle: string | null
   contents?: SectionContent[]
   cards?: SectionCard[]
   images?: SectionImage[]
@@ -143,26 +140,18 @@ export interface Section {
 
 export interface CreateSectionDto {
   name: SectionName
-  title: string
-  subtitle: string
+  title?: string
+  subtitle?: string
 }
 
 export interface UpdateSectionDto {
-  name?: string
   title?: string
   subtitle?: string
 }
 
 // ─── Content ──────────────────────────────────────────────────────────────────
 
-export const ContentType = {
-  P1: 'P1',
-  P2: 'P2',
-  P3: 'P3',
-  P4: 'P4',
-  P5: 'P5',
-} as const
-export type ContentType = typeof ContentType[keyof typeof ContentType]
+export type ContentType = 'P1' | 'P2' | 'P3' | 'P4' | 'P5'
 
 export interface SectionContent {
   idContent: number
@@ -173,10 +162,8 @@ export interface SectionContent {
   updatedAt?: string
 }
 
-export interface ContentDto {
-  type: ContentType
-  content: string
-}
+export interface ContentDto { type: ContentType; content: string }
+export interface CreateContentDto { type: ContentType; content: string; sectionId: number }
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
 
@@ -189,10 +176,8 @@ export interface SectionStat {
   updatedAt?: string
 }
 
-export interface StatsDto {
-  title: string
-  value: string
-}
+export interface StatsDto { title: string; value: string }
+export interface CreateStatDto { title: string; value: string; sectionId: number }
 
 // ─── Button ───────────────────────────────────────────────────────────────────
 
@@ -205,16 +190,15 @@ export interface SectionButton {
   updatedAt?: string
 }
 
-export interface ButtonDto {
-  label: string
-  link: string
-}
+export interface ButtonDto { label: string; link: string }
+export interface CreateButtonDto { label: string; link: string; sectionId: number }
 
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
 export interface SectionCard {
   idCard: number
   title: string
+  /** Subtitle / short description of the card */
   description: string
   icon: string
   sectionId: number
@@ -222,11 +206,8 @@ export interface SectionCard {
   updatedAt?: string
 }
 
-export interface CardDto {
-  title: string
-  description: string
-  icon: string
-}
+export interface CardDto { title: string; description: string; icon: string }
+export interface CreateCardDto { title: string; description: string; icon: string; sectionId: number }
 
 // ─── Image ────────────────────────────────────────────────────────────────────
 
@@ -239,14 +220,8 @@ export interface SectionImage {
   updatedAt?: string
 }
 
-export interface CreateImageDto {
-  altText: string
-  sectionId: number
-}
-
-export interface UpdateImageDto {
-  altText?: string
-}
+export interface CreateImageDto { altText: string; sectionId: number }
+export interface UpdateImageDto { altText?: string }
 
 // ─── Full Section ─────────────────────────────────────────────────────────────
 
@@ -267,8 +242,6 @@ export interface ApiError {
   statusCode: number
   error?: string
 }
-
-// ─── Institutional (local CMS — sem endpoint no backend) ──────────────────────
 
 export interface InstitutionalContent {
   homeTitle: string
