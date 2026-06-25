@@ -9,8 +9,10 @@ const Products = lazy(() => import('@/pages/public/Products').then(m => ({ defau
 const Culture  = lazy(() => import('@/pages/public/Culture').then(m => ({ default: m.Culture })))
 const NotFound = lazy(() => import('@/pages/public/NotFound').then(m => ({ default: m.NotFound })))
 
-const AdminLogin    = lazy(() => import('@/pages/admin/AdminLogin').then(m => ({ default: m.AdminLogin })))
-const AdminRegister = lazy(() => import('@/pages/admin/AdminRegister').then(m => ({ default: m.AdminRegister })))
+const AdminLogin          = lazy(() => import('@/pages/admin/AdminLogin').then(m => ({ default: m.AdminLogin })))
+const AdminRegister       = lazy(() => import('@/pages/admin/AdminRegister').then(m => ({ default: m.AdminRegister })))
+const AdminForgotPassword = lazy(() => import('@/pages/admin/AdminForgotPassword').then(m => ({ default: m.AdminForgotPassword })))
+const AdminResetPassword  = lazy(() => import('@/pages/admin/AdminResetPassword').then(m => ({ default: m.AdminResetPassword })))
 
 const AdminDashboard    = lazy(() => import('@/pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })))
 const AdminProductMgmt  = lazy(() => import('@/pages/admin/AdminProductManagement').then(m => ({ default: m.AdminProductManagement })))
@@ -47,15 +49,24 @@ export default function App() {
       />
       <Suspense fallback={<PageLoader />}>
         <Routes>
+          {/* ── Rotas públicas ─────────────────────────────────────── */}
           <Route element={<PublicLayout />}>
-            <Route path="/"        element={<Home />} />
+            <Route path="/"         element={<Home />} />
             <Route path="/produtos" element={<Products />} />
             <Route path="/cultura"  element={<Culture />} />
           </Route>
 
-          <Route path="/admin"          element={<AdminLogin />} />
-          <Route path="/admin/cadastro" element={<AdminRegister />} />
+          {/* ── Autenticação admin ─────────────────────────────────── */}
+          <Route path="/admin"                  element={<AdminLogin />} />
+          <Route path="/admin/cadastro"         element={<AdminRegister />} />
 
+          {/* Recuperação de senha — fluxo de 2 etapas:
+              1. /admin/recuperar-senha  → usuário informa o e-mail → recebe código
+              2. /admin/redefinir-senha  → usuário informa email + código + nova senha   */}
+          <Route path="/admin/recuperar-senha"  element={<AdminForgotPassword />} />
+          <Route path="/admin/redefinir-senha"  element={<AdminResetPassword />} />
+
+          {/* ── Painel admin (autenticado) ─────────────────────────── */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard"  element={<AdminDashboard />} />
             <Route path="products"   element={<AdminProductMgmt />} />
