@@ -21,7 +21,9 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 api.interceptors.response.use(
   (res) => res,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    const url = error.config?.url ?? ''
+    // Don't redirect on auth/login — a 401 there means wrong credentials, not session expiry
+    if (error.response?.status === 401 && !url.includes('/auth/login')) {
       useAuthStore.getState().logout()
       window.location.href = '/admin'
     }

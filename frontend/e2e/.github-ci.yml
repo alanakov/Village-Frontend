@@ -1,0 +1,149 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+env:
+  BASE_URL:              http://localhost:5173
+  API_URL:               http://localhost:8080/api
+  UPLOADS_URL:           http://localhost:8080/uploads
+  TEST_ADMIN_EMAIL:      ${{ secrets.TEST_ADMIN_EMAIL }}
+  TEST_ADMIN_PASSWORD:   ${{ secrets.TEST_ADMIN_PASSWORD }}
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE:      village_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      # ── Checkout ────────────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── Node setup ──────────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── Backend setup ───────────────────────────────────────────────────────
+      - name: Install backend dependencies
+        working-directory: Village-Admin-Backend-develop/adminService
+        run: npm ci
+
+      - name: Start backend
+        working-directory: Village-Admin-Backend-develop/adminService
+        env:
+          DB_HOST:         localhost
+          DB_PORT:         3306
+          DB_USER:         root
+          DB_PASSWORD:     root
+          DB_NAME:         village_test
+          JWT_SECRET:      ci-jwt-secret-for-testing
+          JWT_EXPIRATION:  1d
+          REDIS_HOST:      localhost
+          REDIS_PORT:      6379
+        run: npm run start:prod &
+        shell: bash
+
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend..."
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:8080/api/health && break || sleep 2
+          done
+
+      # ── Frontend setup ──────────────────────────────────────────────────────
+      - name: Install frontend dependencies
+        working-directory: Village-Frontend-develop/frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: Village-Frontend-develop/frontend
+        env:
+          VITE_API_URL:        http://localhost:8080/api
+          VITE_UPLOADS_URL:    http://localhost:8080/uploads
+          VITE_WHATSAPP_NUMBER: 5511999999999
+        run: npm run build
+
+      - name: Serve frontend
+        working-directory: Village-Frontend-develop/frontend
+        run: npx serve dist -p 5173 &
+        shell: bash
+
+      # ── E2E tests ────────────────────────────────────────────────────────────
+      - name: Install E2E dependencies
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Seed test admin user
+        # Creates the admin user that auth.setup.ts will use to log in
+        working-directory: Village-Admin-Backend-develop/adminService
+        env:
+          DB_HOST:       localhost
+          DB_PORT:       3306
+          DB_USER:       root
+          DB_PASSWORD:   root
+          DB_NAME:       village_test
+          ADMIN_EMAIL:   ${{ secrets.TEST_ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD }}
+        run: |
+          # This calls the register endpoint to seed the test admin
+          curl -sf -X POST http://localhost:8080/api/admin \
+            -H 'Content-Type: application/json' \
+            -d "{\"name\":\"CI Admin\",\"email\":\"$ADMIN_EMAIL\",\"password\":\"$ADMIN_PASSWORD\",\"phone\":\"11999999999\"}" \
+            || echo "Admin may already exist — continuing"
+
+      - name: Run E2E tests
+        working-directory: e2e
+        run: npm run test:ci
+
+      # ── Artifacts ────────────────────────────────────────────────────────────
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 7
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: e2e/test-results/
+          retention-days: 3
