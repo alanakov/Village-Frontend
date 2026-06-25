@@ -1,11 +1,9 @@
 import { useState, useCallback, useRef } from 'react'
-import { imageService } from '@/services/imageService'
-import { sectionService } from '@/services/sectionService'
+import { productImageService } from '@/services/productImageService'
 import { validateImageFile, createLocalPreview } from '@/utils/fileValidation'
 import { getUploadUrl } from '@/services/api'
-import type { SectionName } from '@/types'
 
-export function useImageUpload(anchorSectionName: SectionName) {
+export function useImageUpload() {
   const [pendingFile, setPendingFile]   = useState<File | null>(null)
   const [localPreview, setLocalPreview] = useState<string>('')
   const [resolvedUrl, setResolvedUrl]   = useState<string>('')
@@ -19,18 +17,6 @@ export function useImageUpload(anchorSectionName: SectionName) {
       URL.revokeObjectURL(localPreviewRef.current)
       localPreviewRef.current = ''
     }
-  }
-
-  const resolveSectionId = async (): Promise<number> => {
-    const sections = await sectionService.getAll()
-    const section = sections.find((s) => s.name === anchorSectionName)
-    if (!section) {
-      throw new Error(
-        `A seção "${anchorSectionName}" ainda não existe no banco de dados. ` +
-        `Acesse Conteúdo → crie a seção "${anchorSectionName}" para habilitar o upload de imagens de produto.`
-      )
-    }
-    return section.idSection
   }
 
   const initWithUrl = useCallback((url: string) => {
@@ -78,7 +64,7 @@ export function useImageUpload(anchorSectionName: SectionName) {
   }, [])
 
   const resolveImageUrl = useCallback(
-    async (altText: string): Promise<string> => {
+    async (_altText?: string): Promise<string> => {
       if (resolvedUrl && !pendingFile) return resolvedUrl
 
       if (!pendingFile) {
@@ -91,12 +77,10 @@ export function useImageUpload(anchorSectionName: SectionName) {
       setError('')
 
       try {
-        const sectionId = await resolveSectionId()
-        const result = await imageService.create(altText || 'Imagem', sectionId, pendingFile)
-        const url = result.imageUrl
-        setResolvedUrl(url)
+        const { imageUrl } = await productImageService.upload(pendingFile)
+        setResolvedUrl(imageUrl)
         setPendingFile(null)
-        return url
+        return imageUrl
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Falha no upload da imagem.'
         setError(msg)
@@ -105,7 +89,7 @@ export function useImageUpload(anchorSectionName: SectionName) {
         setUploading(false)
       }
     },
-    [pendingFile, resolvedUrl, anchorSectionName]
+    [pendingFile, resolvedUrl],
   )
 
   const previewUrl = localPreview || (resolvedUrl ? getUploadUrl(resolvedUrl) : '')
