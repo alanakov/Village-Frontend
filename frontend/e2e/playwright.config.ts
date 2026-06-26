@@ -12,7 +12,7 @@ import path from 'path'
  * so product/admin tests never need to re-login.
  */
 
-export const BASE_URL      = process.env.BASE_URL      ?? 'http://localhost:5173'
+export const BASE_URL      = process.env.BASE_URL      ?? 'http://localhost:3000'
 export const API_URL       = process.env.API_URL        ?? 'http://localhost:8080/api/'
 export const UPLOADS_URL   = process.env.UPLOADS_URL    ?? 'http://localhost:8080/uploads'
 

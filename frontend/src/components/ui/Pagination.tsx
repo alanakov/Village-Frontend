@@ -27,6 +27,7 @@ export function Pagination({
   totalPages,
   totalCount,
   pageSize,
+  onPageChange,
   onPageSizeChange,
   pageSizeOptions = [6, 12, 24],
   canGoPrev,

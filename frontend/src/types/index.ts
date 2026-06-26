@@ -95,16 +95,18 @@ export interface UpdateProductDto {
   categoryId?: number
 }
 
-export enum SectionName {
-  home              = 'Principal',
-  aboutUs           = 'Quem Somos',
-  featuredCraft     = 'Artesanato em Destaque',
-  socialImpact      = 'Impacto Social',
-  identity          = 'Identidade',
-  cultureDimensions = 'Dimensões da Nossa Cultura',
-  communityMoments  = 'Momentos da Nossa Comunidade',
-  crafts            = 'Artesanato',
-}
+export const SectionName = {
+  home: 'Principal',
+  aboutUs: 'Quem Somos',
+  featuredCraft: 'Artesanato em Destaque',
+  socialImpact: 'Impacto Social',
+  identity: 'Identidade',
+  cultureDimensions: 'Dimensões da Nossa Cultura',
+  communityMoments: 'Momentos da Nossa Comunidade',
+  crafts: 'Artesanato',
+} as const
+
+export type SectionName = (typeof SectionName)[keyof typeof SectionName]
 
 export interface Section {
   idSection: number
