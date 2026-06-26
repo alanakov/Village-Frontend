@@ -1,11 +1,10 @@
 import { useState, type ChangeEvent } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { KeyRound, Leaf, Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react'
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/utils/validations'
 import { adminService } from '@/services/adminService'
-import { useAuthStore } from '@/store/authStore'
 import { getApiErrorMessage } from '@/utils/helpers'
 import { Button } from '@/components/ui/Button'
 import { PasswordStrength } from '@/components/admin/PasswordStrength'
@@ -115,7 +114,6 @@ function PasswordField({
 // ── Componente principal ──────────────────────────────────────────────────────
 
 export function AdminResetPassword() {
-  const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -130,9 +128,6 @@ export function AdminResetPassword() {
   } = useForm<ResetPasswordFormData>({ resolver: zodResolver(resetPasswordSchema) })
 
   const newPasswordValue = watch('newPassword', '')
-
-  // Usuário já autenticado não precisa desta tela
-  if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />
 
   const emailReg = register('email')
   const maskedEmailReg = {

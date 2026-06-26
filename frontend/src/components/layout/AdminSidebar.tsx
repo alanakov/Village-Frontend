@@ -7,6 +7,7 @@ import {
   FileText,
   LogOut,
   Leaf,
+  UserCog,
 } from 'lucide-react'
 import { cn } from '@/utils/helpers'
 import { useAuthStore } from '@/store/authStore'
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { to: '/admin/categories', icon: FolderOpen,      label: 'Categorias' },
   { to: '/admin/analytics',  icon: BarChart2,       label: 'Análises' },
   { to: '/admin/content',    icon: FileText,        label: 'Conteúdo' },
+  { to: '/admin/profile',    icon: UserCog,         label: 'Meu Perfil' },
 ]
 
 export function AdminSidebar() {

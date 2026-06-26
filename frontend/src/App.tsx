@@ -19,6 +19,7 @@ const AdminProductMgmt  = lazy(() => import('@/pages/admin/AdminProductManagemen
 const AdminCategoryMgmt = lazy(() => import('@/pages/admin/AdminCategoryManagement').then(m => ({ default: m.AdminCategoryManagement })))
 const AdminAnalytics    = lazy(() => import('@/pages/admin/AdminAnalytics').then(m => ({ default: m.AdminAnalytics })))
 const AdminContent      = lazy(() => import('@/pages/admin/AdminContentManagement').then(m => ({ default: m.AdminContentManagement })))
+const AdminProfile      = lazy(() => import('@/pages/admin/AdminProfile').then(m => ({ default: m.AdminProfile })))
 
 function PageLoader() {
   return (
@@ -73,6 +74,7 @@ export default function App() {
             <Route path="categories" element={<AdminCategoryMgmt />} />
             <Route path="analytics"  element={<AdminAnalytics />} />
             <Route path="content"    element={<AdminContent />} />
+            <Route path="profile"    element={<AdminProfile />} />
           </Route>
 
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
