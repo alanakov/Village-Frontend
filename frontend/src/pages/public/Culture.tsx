@@ -65,7 +65,7 @@ export function Culture() {
               </h2>
               <div className="w-16 h-1 bg-[var(--accent)] mx-auto rounded-full" />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-10 max-w-4xl mx-auto">
               {dimensoesCards.map((card, i) => {
                 const CardIcon = resolveIcon(card.icon, i)
                 return (
@@ -88,7 +88,7 @@ export function Culture() {
             <h2 className="font-display text-3xl font-bold text-center text-[var(--primary)] mb-12">
               Momentos da Nossa Comunidade
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+            <div className="grid grid-cols-4 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {galleryImages.map((img, i) => (
                 <div
                   key={img.idImage}

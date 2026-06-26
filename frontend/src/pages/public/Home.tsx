@@ -174,11 +174,11 @@ export function Home() {
               )}
 
               {impactoCards.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
+                <div className="flex flex-wrap justify-center gap-8 mb-12">
                   {impactoCards.map((card, i) => {
                     const CardIcon = resolveIcon(card.icon, i)
                     return (
-                      <div key={card.idCard} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                      <div key={card.idCard} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 w-full sm:w-72 lg:w-80">
                         <CardIcon className="w-10 h-10 mx-auto mb-4 opacity-90" />
                         <div className="font-display text-3xl font-bold mb-2">{card.title}</div>
                         <div className="opacity-80 font-ui text-sm">{card.description}</div>
