@@ -10,7 +10,7 @@ export interface PublicContentState {
   getCards:      (sectionName: string) => SectionCard[]
   getImages:     (sectionName: string) => SectionImage[]
   getFirstImage: (sectionName: string) => string
-  /** Returns the text of the first content matching `type`, or '' if not found */
+  
   getContent:    (sectionName: string, type: ContentType) => string
   getContents:   (sectionName: string) => SectionContent[]
 }

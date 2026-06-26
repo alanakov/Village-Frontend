@@ -1,15 +1,15 @@
-import React from 'react';
-import { cn } from '@/utils/helpers';
+import { forwardRef, type InputHTMLAttributes } from 'react'
+import { cn } from '@/utils/helpers'
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  hint?: string;
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string
+  error?: string
+  hint?: string
 }
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, hint, className, id, ...props }, ref) => {
-    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
+    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
     return (
       <div className="flex flex-col gap-1.5 font-ui">
         {label && (
@@ -39,7 +39,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         {hint && !error && <p className="text-xs text-[var(--muted-foreground)]">{hint}</p>}
       </div>
-    );
+    )
   }
-);
-Input.displayName = 'Input';
+)
+Input.displayName = 'Input'

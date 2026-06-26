@@ -22,15 +22,6 @@ interface ImageUploadInputProps {
   onClear: () => void
 }
 
-/**
- * Componente de UI genérico para upload de imagem com preview.
- *
- * Não carrega nenhuma lógica de negócio — apenas apresentação e eventos.
- * Toda a lógica de validação e upload fica no hook `useImageUpload`.
- *
- * Segue o padrão visual dos demais componentes em `components/ui/`:
- * bordas arredondadas, variáveis CSS do design system, estados de erro e disabled.
- */
 export function ImageUploadInput({
   previewUrl,
   fileName,
@@ -46,7 +37,6 @@ export function ImageUploadInput({
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) onFileChange(file)
-    // Limpa o input para permitir selecionar o mesmo arquivo novamente
     e.target.value = ''
   }
 
@@ -64,7 +54,6 @@ export function ImageUploadInput({
       )}
 
       {previewUrl ? (
-        /* ── Estado: imagem selecionada — exibe preview ── */
         <div className="flex flex-col gap-2">
           <div className="relative w-full rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--muted)]">
             <img
@@ -77,7 +66,6 @@ export function ImageUploadInput({
             />
 
             {disabled ? (
-              /* Overlay de carregamento durante o upload */
               <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                 <span className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
               </div>
@@ -111,7 +99,6 @@ export function ImageUploadInput({
           </div>
         </div>
       ) : (
-        /* ── Estado: sem imagem — exibe área de seleção ── */
         <button
           type="button"
           onClick={openFilePicker}
@@ -134,7 +121,7 @@ export function ImageUploadInput({
         </button>
       )}
 
-      {/* Input de arquivo oculto */}
+      {}
       <input
         ref={fileInputRef}
         type="file"

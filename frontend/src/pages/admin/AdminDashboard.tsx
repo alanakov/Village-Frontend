@@ -44,8 +44,6 @@ export function AdminDashboard() {
           <UserPlus className="w-4 h-4" /> Convidar administrador
         </Button>
       </div>
-
-      {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
@@ -80,8 +78,6 @@ export function AdminDashboard() {
           </>
         )}
       </div>
-
-      {/* Recent Products */}
       <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm overflow-hidden">
         <div className="px-6 py-5 border-b border-[var(--border)]">
           <h2 className="font-display text-xl font-semibold text-[var(--card-foreground)]">

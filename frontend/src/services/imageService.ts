@@ -12,10 +12,6 @@ export const imageService = {
     return data
   },
 
-  /**
-   * Cria uma imagem via multipart/form-data.
-   * O backend usa FileInterceptor('file') + CreateImageDto { altText, sectionId }.
-   */
   async create(altText: string, sectionId: number, file: File): Promise<SectionImage> {
     const form = new FormData()
     form.append('altText', altText)
@@ -27,9 +23,6 @@ export const imageService = {
     return data
   },
 
-  /**
-   * Atualiza altText e/ou substitui o arquivo de imagem.
-   */
   async update(id: number, dto: UpdateImageDto, file?: File): Promise<SectionImage> {
     const form = new FormData()
     if (dto.altText !== undefined) form.append('altText', dto.altText)

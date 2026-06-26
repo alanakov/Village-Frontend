@@ -16,31 +16,21 @@ export function Home() {
   const { getSection, getCards, getImages } = usePublicContent()
 
   const featured = products.slice(0, 6)
-
-  // ── Principal ─────────────────────────────────────────────────────────────
   const heroSection   = getSection(SectionName.home)
   const heroTitle     = heroSection?.title    ?? local.homeTitle
   const heroSubtitle  = heroSection?.subtitle ?? local.homeSubtitle
-
-  // ── Quem Somos ────────────────────────────────────────────────────────────
   const aboutSection  = getSection(SectionName.aboutUs)
   const aboutSubtitle = aboutSection?.subtitle ?? ''
-  const aboutImages   = getImages(SectionName.aboutUs)
-  // Only show section image when one has been uploaded — no hardcoded fallback
+  const aboutImages   = getImages(SectionName.aboutUs)  
   const aboutImageUrl = aboutImages.length > 0 ? getUploadUrl(aboutImages[0].imageUrl) : null
-
-  // ── Artesanato em Destaque ─────────────────────────────────────────────────
   const artDestSection  = getSection(SectionName.featuredCraft)
   const artDestSubtitle = artDestSection?.subtitle ?? 'Peças únicas feitas à mão com dedicação e amor'
-
-  // ── Impacto Social ────────────────────────────────────────────────────────
   const impactoSection  = getSection(SectionName.socialImpact)
   const impactoSubtitle = impactoSection?.subtitle ?? 'O artesanato preserva nossa cultura e identidade.'
   const impactoCards    = getCards(SectionName.socialImpact)
 
   return (
     <div>
-      {/* ── Hero / Principal ────────────────────────────────────────────── */}
       <section className="relative min-h-[88vh] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -86,8 +76,6 @@ export function Home() {
           </div>
         </div>
       </section>
-
-      {/* ── Quem Somos — only render when section exists ─────────────────── */}
       {aboutSection && (
         <section className="container mx-auto px-4 py-24">
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -120,8 +108,6 @@ export function Home() {
                 Conheça nossa cultura <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-
-            {/* Image — only when uploaded, no fallback */}
             {aboutImageUrl ? (
               <div className="rounded-3xl overflow-hidden shadow-2xl aspect-[4/5]">
                 <img
@@ -141,8 +127,6 @@ export function Home() {
           </div>
         </section>
       )}
-
-      {/* ── Artesanato em Destaque ───────────────────────────────────────── */}
       <section className="bg-[var(--muted)] py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -176,8 +160,6 @@ export function Home() {
           </div>
         </div>
       </section>
-
-      {/* ── Impacto Social ───────────────────────────────────────────────── */}
       {impactoSection && (
         <section className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary)]/85 text-white py-24">
           <div className="container mx-auto px-4">

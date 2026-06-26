@@ -7,21 +7,14 @@ import { resolveIcon } from '@/utils/iconMapper'
 export function Culture() {
   const { content: local } = useInstitutionalStore()
   const { getSection, getCards, getImages } = usePublicContent()
-
-  // ── Identidade ────────────────────────────────────────────────────────────
   const identidadeSection  = getSection(SectionName.identity)
   const identidadeTitle    = identidadeSection?.title    ?? 'Uma Herança Que Vive em Cada Gesto'
   const identidadeSubtitle = identidadeSection?.subtitle ?? 'Uma herança viva que une passado, presente e futuro'
-
-  // ── Dimensões da Nossa Cultura ────────────────────────────────────────────
   const dimensoesCards = getCards(SectionName.cultureDimensions)
-
-  // ── Momentos da Nossa Comunidade ──────────────────────────────────────────
   const galleryImages = getImages(SectionName.communityMoments)
 
   return (
     <div>
-      {/* ── Hero — neutral gradient, no hardcoded image ──────────────────── */}
       <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)] via-[var(--primary)]/80 to-[var(--secondary)]/70" />
         <div className="relative z-10 text-center text-white px-4">
@@ -33,8 +26,6 @@ export function Culture() {
           </p>
         </div>
       </section>
-
-      {/* ── Identidade ───────────────────────────────────────────────────── */}
       {identidadeSection && (
         <section className="container mx-auto px-4 py-20">
           <div className="max-w-4xl mx-auto">
@@ -65,8 +56,6 @@ export function Culture() {
           </div>
         </section>
       )}
-
-      {/* ── Dimensões da Nossa Cultura — icon from card.icon ─────────────── */}
       {dimensoesCards.length > 0 && (
         <section className="bg-[var(--muted)] py-20">
           <div className="container mx-auto px-4">
@@ -93,8 +82,6 @@ export function Culture() {
           </div>
         </section>
       )}
-
-      {/* ── Momentos da Nossa Comunidade — API images only ───────────────── */}
       {galleryImages.length > 0 && (
         <section className="py-20">
           <div className="container mx-auto px-4">

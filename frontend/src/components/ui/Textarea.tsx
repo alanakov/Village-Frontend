@@ -1,14 +1,14 @@
-import React from 'react';
-import { cn } from '@/utils/helpers';
+import { forwardRef, type TextareaHTMLAttributes } from 'react'
+import { cn } from '@/utils/helpers'
 
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  label?: string;
-  error?: string;
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  label?: string
+  error?: string
 }
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, className, id, ...props }, ref) => {
-    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
+    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
     return (
       <div className="flex flex-col gap-1.5 font-ui">
         {label && (
@@ -31,7 +31,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         />
         {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
       </div>
-    );
+    )
   }
-);
-Textarea.displayName = 'Textarea';
+)
+Textarea.displayName = 'Textarea'

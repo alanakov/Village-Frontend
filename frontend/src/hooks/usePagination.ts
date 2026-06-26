@@ -41,9 +41,7 @@ export function usePagination<T>(config: PaginationConfig<T>): PaginationResult<
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSizeState]  = useState(initialPageSize)
   const [sortKey, setSortKey]         = useState<keyof T | null>(defaultSortKey as keyof T | null)
-  const [sortOrder, setSortOrder]     = useState<SortOrder>(defaultSortOrder)
-
-  // Sort
+  const [sortOrder, setSortOrder]     = useState<SortOrder>(defaultSortOrder)  
   const sorted = useMemo(() => {
     if (!sortKey) return items
     return [...items].sort((a, b) => {
@@ -62,9 +60,7 @@ export function usePagination<T>(config: PaginationConfig<T>): PaginationResult<
   }, [items, sortKey, sortOrder])
 
   const totalCount = sorted.length
-  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))
-
-  // Clamp page when items change (e.g. after delete or filter)
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize))  
   const safePage = Math.min(currentPage, totalPages)
 
   const paged = useMemo(() => {

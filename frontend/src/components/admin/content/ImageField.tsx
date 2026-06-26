@@ -74,7 +74,6 @@ export function ImageField({ item, onUpdated, disabled }: ImageFieldProps) {
 
   return (
     <div className="p-3 bg-[var(--muted)] rounded-xl border border-[var(--border)] space-y-2">
-      {/* Alt text row */}
       <div className="flex items-center gap-2">
         <div className="flex-1 space-y-1">
           <label className="text-xs font-semibold text-[var(--muted-foreground)] font-ui">
@@ -96,8 +95,6 @@ export function ImageField({ item, onUpdated, disabled }: ImageFieldProps) {
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
-
-      {/* Image upload */}
       <ImageUploadInput
         previewUrl={previewUrl}
         fileName={pendingFile?.name}

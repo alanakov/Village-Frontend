@@ -18,18 +18,14 @@ export function AdminContentManagement() {
   } = useSections()
 
   const [activeView, setActiveView] = useState<ActiveView | null>(null)
-  const [showCreateModal, setShowCreateModal] = useState(false)
-
-  // Resolve what's currently displayed; null when there are no sections yet
+  const [showCreateModal, setShowCreateModal] = useState(false)  
   const resolvedView: ActiveView | null =
     activeView ?? (sections.length > 0 ? sections[0].idSection : null)
 
   const activeSection =
     resolvedView !== null
       ? sections.find((s) => s.idSection === resolvedView) ?? null
-      : null
-
-  // When a section is deleted, clear selection if it was active
+      : null  
   const handleSectionDeleted = (deletedId: number) => {
     deleteSection(deletedId)
     if (resolvedView === deletedId) {
@@ -40,7 +36,6 @@ export function AdminContentManagement() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* ── Page header ───────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="font-display text-3xl font-bold text-[var(--primary)]">Conteúdo</h1>
@@ -68,10 +63,7 @@ export function AdminContentManagement() {
           </a>
         </div>
       </div>
-
-      {/* ── Main layout ───────────────────────────────────────────────── */}
       <div className="flex gap-6 flex-1 min-h-0">
-        {/* Sidebar nav */}
         <aside className="w-64 shrink-0">
           <div className="sticky top-0 bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm overflow-hidden">
             <div className="px-4 pt-4 pb-3 border-b border-[var(--border)]">
@@ -94,8 +86,6 @@ export function AdminContentManagement() {
             </div>
           </div>
         </aside>
-
-        {/* Main content area */}
         <div className="flex-1 min-w-0 pb-8">
           {loading && sections.length === 0 ? (
             <div className="space-y-4">
@@ -111,7 +101,7 @@ export function AdminContentManagement() {
               onDeleted={handleSectionDeleted}
             />
           ) : (
-            /* No sections at all */
+            
             <div className="rounded-2xl border-2 border-dashed border-[var(--border)] p-12 flex flex-col items-center justify-center text-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-[var(--primary)]/10 flex items-center justify-center">
                 <Plus className="w-8 h-8 text-[var(--primary)]" />
@@ -132,8 +122,6 @@ export function AdminContentManagement() {
           )}
         </div>
       </div>
-
-      {/* ── Create section modal ──────────────────────────────────────── */}
       <CreateSectionModal
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}

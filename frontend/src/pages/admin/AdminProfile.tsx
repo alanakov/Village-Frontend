@@ -28,9 +28,7 @@ export function AdminProfile() {
   } = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: { name: '', phone: '' },
-  })
-
-  // Populate form once profile data is available
+  })  
   useEffect(() => {
     if (profile) {
       reset({ name: profile.name, phone: profile.phone })
@@ -51,7 +49,6 @@ export function AdminProfile() {
 
   return (
     <div>
-      {/* ── Page header ─────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="font-display text-3xl font-bold text-[var(--primary)] mb-1">
@@ -64,7 +61,6 @@ export function AdminProfile() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ── Left column — identity card ───────────────────────── */}
         <div className="lg:col-span-1">
           <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm p-6 flex flex-col items-center text-center gap-3">
             {loading ? (
@@ -75,7 +71,6 @@ export function AdminProfile() {
               </>
             ) : (
               <>
-                {/* Avatar — initials */}
                 <div className="w-20 h-20 rounded-full bg-[var(--primary)]/10 flex items-center justify-center shrink-0">
                   <span className="text-2xl font-bold font-display text-[var(--primary)]">
                     {(profile?.name ?? user?.name ?? 'A')
@@ -112,8 +107,6 @@ export function AdminProfile() {
               </>
             )}
           </div>
-
-          {/* ── Change password link ─────────────────────────── */}
           <div className="mt-4 bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm p-5">
             <div className="flex items-start gap-3">
               <div className="w-9 h-9 rounded-xl bg-[var(--muted)] flex items-center justify-center shrink-0">
@@ -137,8 +130,6 @@ export function AdminProfile() {
             </div>
           </div>
         </div>
-
-        {/* ── Right column — edit form ──────────────────────────── */}
         <div className="lg:col-span-2">
           <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm overflow-hidden">
             <div className="px-6 py-5 border-b border-[var(--border)] flex items-center gap-2">
@@ -147,8 +138,6 @@ export function AdminProfile() {
                 Editar informações
               </h2>
             </div>
-
-            {/* Error banner */}
             {error && !loading && (
               <div className="mx-6 mt-6 bg-[var(--destructive)]/10 text-[var(--destructive)] px-4 py-3 rounded-xl text-sm font-ui border border-[var(--destructive)]/20">
                 {error}
@@ -164,7 +153,6 @@ export function AdminProfile() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-                  {/* Name */}
                   <div className="flex flex-col gap-1.5 font-ui">
                     <label
                       htmlFor="name"
@@ -195,8 +183,6 @@ export function AdminProfile() {
                       </p>
                     )}
                   </div>
-
-                  {/* Email — read-only */}
                   <div className="flex flex-col gap-1.5 font-ui">
                     <label
                       htmlFor="email"
@@ -220,8 +206,6 @@ export function AdminProfile() {
                       O e-mail é utilizado como identificador da conta e não pode ser alterado.
                     </p>
                   </div>
-
-                  {/* Phone */}
                   <div className="flex flex-col gap-1.5 font-ui">
                     <label
                       htmlFor="phone"
@@ -256,8 +240,6 @@ export function AdminProfile() {
                       </p>
                     )}
                   </div>
-
-                  {/* Actions */}
                   <div className="flex justify-end pt-2">
                     <Button
                       type="submit"

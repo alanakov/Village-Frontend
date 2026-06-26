@@ -12,15 +12,6 @@ interface UseProfileReturn {
   updateProfile: (dto: UpdateAdminDto) => Promise<AdminUser>
 }
 
-/**
- * Hook responsible for fetching and updating the currently authenticated
- * admin's own profile data.
- *
- * Strategy:
- * - Uses `req.user.idUser` from the JWT (available in authStore) to call
- *   `GET /admin/:id`, which returns the full admin record including `phone`.
- * - Updates via `PUT /admin/:id`, the backend enforces that id === loggedAdminId.
- */
 export function useProfile(): UseProfileReturn {
   const { user, setAuth, token } = useAuthStore()
   const [profile, setProfile] = useState<AdminUser | null>(null)
@@ -35,7 +26,7 @@ export function useProfile(): UseProfileReturn {
     try {
       const data = await adminService.getById(user.idUser)
       setProfile(data)
-    } catch (err) {
+    } catch {
       setError('Não foi possível carregar os dados do perfil.')
     } finally {
       setLoading(false)
@@ -53,12 +44,8 @@ export function useProfile(): UseProfileReturn {
       try {
         const updated = await adminService.update(user.idUser, dto)
         setProfile(updated)
-        // Keep the auth store in sync with the new name
         if (token) {
-          setAuth(token, {
-            ...user,
-            name: updated.name ?? user.name,
-          })
+          setAuth(token, { ...user, name: updated.name ?? user.name })
         }
         return updated
       } finally {

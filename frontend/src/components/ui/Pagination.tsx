@@ -43,10 +43,8 @@ export function Pagination({
   const to   = Math.min(currentPage * pageSize, totalCount)
 
   const btnBase =
-    'flex items-center justify-center w-8 h-8 rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5'
-
-  // Gera os números de página a exibir (janela deslizante de 5)
-  const pages: (number | '...')[] = []
+    'flex items-center justify-center w-8 h-8 rounded-lg border border-[var(--border)] text-[var(--muted-foreground)] transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5'  
+    const pages: (number | '...')[] = []
   if (totalPages <= 7) {
     for (let i = 1; i <= totalPages; i++) pages.push(i)
   } else {
@@ -74,13 +72,10 @@ export function Pagination({
         className
       )}
     >
-      {/* Contagem */}
       <p className="text-xs text-[var(--muted-foreground)] font-ui shrink-0">
         {from}–{to} de {totalCount}{' '}
         {totalCount === 1 ? itemLabel : itemLabelPlural}
       </p>
-
-      {/* Controles centrais */}
       <div className="flex items-center gap-1 flex-wrap">
         <button onClick={goFirst} disabled={!canGoPrev} className={btnBase} title="Primeira página">
           <ChevronsLeft className="w-3.5 h-3.5" />
@@ -122,8 +117,6 @@ export function Pagination({
           <ChevronsRight className="w-3.5 h-3.5" />
         </button>
       </div>
-
-      {/* Itens por página */}
       {onPageSizeChange && (
         <select
           value={pageSize}

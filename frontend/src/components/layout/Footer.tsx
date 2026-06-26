@@ -63,7 +63,6 @@ export function Footer() {
             <p className="flex items-center gap-1">
               Feito com <Heart className="w-3 h-3 fill-current" /> pela comunidade
             </p>
-            {/* Link discreto para acesso administrativo */}
             <Link
               to="/admin"
               className="flex items-center gap-1 hover:opacity-100 transition-opacity"

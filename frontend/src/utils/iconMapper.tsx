@@ -6,46 +6,34 @@ import {
 } from 'lucide-react'
 
 const ICON_MAP: Record<string, LucideIcon> = {
-  // Nature
-  leaf:     Leaf,
-  trees:    Trees,
-  mountain: Mountain,
-  sun:      Sun,
-  moon:     Moon,
-  cloud:    Cloud,
-  flame:    Flame,
-  droplets: Droplets,
-  wind:     Wind,
-  // Culture / Art
-  music:    Music,
-  palette:  Palette,
-  camera:   Camera,
-  // People / Community
-  users:    Users,
-  heart:    Heart,
-  home:     Home,
-  // Commerce
+  leaf:        Leaf,
+  trees:       Trees,
+  mountain:    Mountain,
+  sun:         Sun,
+  moon:        Moon,
+  cloud:       Cloud,
+  flame:       Flame,
+  droplets:    Droplets,
+  wind:        Wind,
+  music:       Music,
+  palette:     Palette,
+  camera:      Camera,
+  users:       Users,
+  heart:       Heart,
+  home:        Home,
   shoppingbag: ShoppingBag,
-  layers:   Layers,
-  // Achievement
-  star:     Star,
-  award:    Award,
-  trophy:   Trophy,
-  target:   Target,
-  // Knowledge
-  bookopen: BookOpen,
-  // Energy
-  zap:      Zap,
-  globe:    Globe,
+  layers:      Layers,
+  star:        Star,
+  award:       Award,
+  trophy:      Trophy,
+  target:      Target,
+  bookopen:    BookOpen,
+  zap:         Zap,
+  globe:       Globe,
 }
 
-// Ordered fallbacks used when icon name is empty or unknown
 const FALLBACKS: LucideIcon[] = [Leaf, Music, Palette, BookOpen, Star, Heart, Users, Zap]
 
-/**
- * Returns the Lucide component for a given icon name string (case-insensitive,
- * spaces/hyphens stripped). Falls back to a positional default if unknown.
- */
 export function resolveIcon(name: string | undefined | null, fallbackIndex = 0): LucideIcon {
   if (name) {
     const key = name.toLowerCase().replace(/[-\s]/g, '')

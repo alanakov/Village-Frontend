@@ -26,16 +26,12 @@ export function Products() {
 
   const [search, setSearch]               = useState('')
   const [activeCategory, setActiveCategory] = useState<number | null>(null)
-  const [sortIdx, setSortIdx]             = useState(0)
-
-  // Section data
+  const [sortIdx, setSortIdx]             = useState(0)  
   const productsSection = getSection(SectionName.crafts)
   const pageTitle       = productsSection?.title    ?? 'Nossa Coleção'
   const pageSubtitle    = getContents(SectionName.crafts)[0]?.content
-    ?? 'Cada peça é única, feita à mão com materiais naturais e técnicas ancestrais'
-
-  // Build unique category list from real products
-  const categories = useMemo(() => {
+    ?? 'Cada peça é única, feita à mão com materiais naturais e técnicas ancestrais'  
+    const categories = useMemo(() => {
     const seen = new Map<number, string>()
     for (const p of products) {
       if (!seen.has(p.categoryId)) {
@@ -56,16 +52,12 @@ export function Products() {
     })
   }, [products, search, activeCategory])
 
-  const currentSort = SORT_OPTIONS[sortIdx]
-
-  // Aplica ordenação externa antes da paginação
+  const currentSort = SORT_OPTIONS[sortIdx]  
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
       const va = a[currentSort.key]
       const vb = b[currentSort.key]
-      let cmp = 0
-      // Convert to number first: handles both native numbers and numeric strings
-      // (MySQL DECIMAL fields may be serialised as strings by the ORM)
+      let cmp = 0      
       const na = Number(va)
       const nb = Number(vb)
       if (!isNaN(na) && !isNaN(nb)) {
@@ -80,15 +72,11 @@ export function Products() {
   const pagination = usePagination<Product>({
     items: sorted,
     pageSize: 12,
-  })
-
-  // Whenever sort/filter changes, reset to first page
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  })  
   useEffect(() => { pagination.setPage(1) }, [search, activeCategory, sortIdx])
 
   return (
     <div className="container mx-auto px-4 py-16">
-      {/* Header */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 mb-4">
           <span className="w-2 h-2 bg-[var(--accent)] rounded-full" />
@@ -104,8 +92,6 @@ export function Products() {
           {pageSubtitle}
         </p>
       </div>
-
-      {/* Search + sort */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-3xl mx-auto">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
@@ -132,8 +118,6 @@ export function Products() {
           </select>
         </div>
       </div>
-
-      {/* Category pills */}
       {categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-10 justify-center">
           <button
@@ -163,15 +147,11 @@ export function Products() {
           ))}
         </div>
       )}
-
-      {/* Error state */}
       {error && (
         <div className="text-center py-12">
           <p className="text-[var(--muted-foreground)] font-ui">{error}</p>
         </div>
       )}
-
-      {/* Grid */}
       {!error && loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Array.from({ length: 12 }).map((_, i) => (
@@ -208,8 +188,6 @@ export function Products() {
               <ProductCard key={p.idProduct} product={p} />
             ))}
           </div>
-
-          {/* Paginação */}
           {pagination.totalPages > 1 && (
             <div className="mt-10 flex justify-center">
               <div className="inline-flex">

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { productService } from '@/services/productService'
 import { categoryService } from '@/services/categoryService'
+import { resolveProductCategories } from '@/utils/helpers'
 import type { Product, Category, CreateProductDto, UpdateProductDto } from '@/types'
 
 export function useProducts() {
@@ -8,11 +9,6 @@ export function useProducts() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  const resolveCategories = (prods: Product[], cats: Category[]): Product[] => {
-    const catMap = new Map(cats.map((c) => [c.idCategory, c]))
-    return prods.map((p) => ({ ...p, category: p.category ?? catMap.get(p.categoryId) }))
-  }
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
@@ -23,7 +19,7 @@ export function useProducts() {
         categoryService.getAll(),
       ])
       setCategories(cats)
-      setProducts(resolveCategories(prods, cats))
+      setProducts(resolveProductCategories(prods, cats))
     } catch {
       setError('Erro ao carregar produtos.')
     } finally {
@@ -35,16 +31,14 @@ export function useProducts() {
 
   const create = async (dto: CreateProductDto): Promise<Product> => {
     const created = await productService.create(dto)
-    const catMap = new Map(categories.map((c) => [c.idCategory, c]))
-    const withCat = { ...created, category: catMap.get(created.categoryId) }
+    const withCat = { ...created, category: categories.find((c) => c.idCategory === created.categoryId) }
     setProducts((prev) => [withCat, ...prev])
     return withCat
   }
 
   const update = async (id: number, dto: UpdateProductDto): Promise<Product> => {
     const updated = await productService.update(id, dto)
-    const catMap = new Map(categories.map((c) => [c.idCategory, c]))
-    const withCat = { ...updated, category: catMap.get(updated.categoryId) }
+    const withCat = { ...updated, category: categories.find((c) => c.idCategory === updated.categoryId) }
     setProducts((prev) => prev.map((p) => (p.idProduct === id ? withCat : p)))
     return withCat
   }

@@ -50,24 +50,17 @@ export default function App() {
       />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* ── Rotas públicas ─────────────────────────────────────── */}
           <Route element={<PublicLayout />}>
             <Route path="/"         element={<Home />} />
             <Route path="/produtos" element={<Products />} />
             <Route path="/cultura"  element={<Culture />} />
           </Route>
 
-          {/* ── Autenticação admin ─────────────────────────────────── */}
-          <Route path="/admin"                  element={<AdminLogin />} />
-          <Route path="/admin/cadastro"         element={<AdminRegister />} />
+          <Route path="/admin"                 element={<AdminLogin />} />
+          <Route path="/admin/cadastro"        element={<AdminRegister />} />
+          <Route path="/admin/recuperar-senha" element={<AdminForgotPassword />} />
+          <Route path="/admin/redefinir-senha" element={<AdminResetPassword />} />
 
-          {/* Recuperação de senha — fluxo de 2 etapas:
-              1. /admin/recuperar-senha  → usuário informa o e-mail → recebe código
-              2. /admin/redefinir-senha  → usuário informa email + código + nova senha   */}
-          <Route path="/admin/recuperar-senha"  element={<AdminForgotPassword />} />
-          <Route path="/admin/redefinir-senha"  element={<AdminResetPassword />} />
-
-          {/* ── Painel admin (autenticado) ─────────────────────────── */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard"  element={<AdminDashboard />} />
             <Route path="products"   element={<AdminProductMgmt />} />
