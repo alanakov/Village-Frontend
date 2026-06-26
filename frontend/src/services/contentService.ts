@@ -1,5 +1,5 @@
 import api from './api'
-import type { SectionContent, ContentDto } from '@/types'
+import type { SectionContent, ContentDto, CreateContentDto } from '@/types'
 
 export const contentService = {
   async getAll(): Promise<SectionContent[]> {
@@ -9,6 +9,11 @@ export const contentService = {
 
   async getById(id: number): Promise<SectionContent> {
     const { data } = await api.get<SectionContent>(`/content/${id}`)
+    return data
+  },
+
+  async create(dto: CreateContentDto): Promise<SectionContent> {
+    const { data } = await api.post<SectionContent>('/content', dto)
     return data
   },
 

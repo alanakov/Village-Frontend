@@ -1,0 +1,138 @@
+import { useState } from 'react'
+import { Eye, Plus } from 'lucide-react'
+import { useSections } from '@/hooks/useSections'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { Button } from '@/components/ui/Button'
+import { SectionNav } from '@/components/admin/content/SectionNav'
+import { SectionPanel } from '@/components/admin/content/SectionPanel'
+import { CreateSectionModal } from '@/components/admin/content/CreateSectionModal'
+import type { ActiveView } from '@/components/admin/content/types'
+
+export function AdminContentManagement() {
+  const {
+    sections,
+    loading,
+    refetch,
+    createFull,
+    deleteSection,
+  } = useSections()
+
+  const [activeView, setActiveView] = useState<ActiveView | null>(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)  
+  const resolvedView: ActiveView | null =
+    activeView ?? (sections.length > 0 ? sections[0].idSection : null)
+
+  const activeSection =
+    resolvedView !== null
+      ? sections.find((s) => s.idSection === resolvedView) ?? null
+      : null  
+  const handleSectionDeleted = (deletedId: number) => {
+    deleteSection(deletedId)
+    if (resolvedView === deletedId) {
+      const remaining = sections.filter((s) => s.idSection !== deletedId)
+      setActiveView(remaining.length > 0 ? remaining[0].idSection : null)
+    }
+  }
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 className="font-display text-3xl font-bold text-[var(--primary)]">Conteúdo</h1>
+          <p className="text-[var(--muted-foreground)] font-ui text-sm mt-1">
+            Gerencie os textos e dados exibidos no site público
+          </p>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <Button
+            variant="primary"
+            onClick={() => setShowCreateModal(true)}
+            disabled={sections.length >= 10}
+          >
+            <Plus className="w-4 h-4" />
+            Nova seção
+          </Button>
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)]/5 font-ui text-base font-semibold transition-colors"
+          >
+            <Eye className="w-4 h-4" />
+            Ver site público
+          </a>
+        </div>
+      </div>
+      <div className="flex gap-6 flex-1 min-h-0">
+        <aside className="w-64 shrink-0">
+          <div className="sticky top-0 bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm overflow-hidden">
+            <div className="px-4 pt-4 pb-3 border-b border-[var(--border)]">
+              <p className="font-display font-bold text-[var(--foreground)] text-sm">
+                Gerenciador de Conteúdo
+              </p>
+              <p className="text-xs text-[var(--muted-foreground)] font-ui mt-0.5">
+                Selecione uma seção para editar
+              </p>
+            </div>
+            <div className="p-2">
+              <SectionNav
+                sections={sections}
+                activeView={resolvedView}
+                onSelect={setActiveView}
+                onRefetch={refetch}
+                onCreateSection={() => setShowCreateModal(true)}
+                loading={loading}
+              />
+            </div>
+          </div>
+        </aside>
+        <div className="flex-1 min-w-0 pb-8">
+          {loading && sections.length === 0 ? (
+            <div className="space-y-4">
+              <Skeleton className="h-28 rounded-2xl" />
+              <Skeleton className="h-48 rounded-2xl" />
+              <Skeleton className="h-32 rounded-2xl" />
+            </div>
+          ) : activeSection ? (
+            <SectionPanel
+              key={activeSection.idSection}
+              section={activeSection}
+              onRefetch={refetch}
+              onDeleted={handleSectionDeleted}
+            />
+          ) : (
+            
+            <div className="rounded-2xl border-2 border-dashed border-[var(--border)] p-12 flex flex-col items-center justify-center text-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-[var(--primary)]/10 flex items-center justify-center">
+                <Plus className="w-8 h-8 text-[var(--primary)]" />
+              </div>
+              <div>
+                <p className="font-display font-bold text-[var(--foreground)] text-xl mb-1">
+                  Nenhuma seção criada
+                </p>
+                <p className="text-sm text-[var(--muted-foreground)] font-ui max-w-sm">
+                  Crie a primeira seção do site para começar a gerenciar o conteúdo. O sistema suporta até 10 seções distintas.
+                </p>
+              </div>
+              <Button variant="primary" size="lg" onClick={() => setShowCreateModal(true)}>
+                <Plus className="w-4 h-4" />
+                Criar primeira seção
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+      <CreateSectionModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        existingSections={sections}
+        onCreate={async (dto) => {
+          const result = await createFull(dto)
+          setShowCreateModal(false)
+          setActiveView(result.section.idSection)
+          return result
+        }}
+      />
+    </div>
+  )
+}

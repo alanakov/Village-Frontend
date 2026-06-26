@@ -9,14 +9,17 @@ const Products = lazy(() => import('@/pages/public/Products').then(m => ({ defau
 const Culture  = lazy(() => import('@/pages/public/Culture').then(m => ({ default: m.Culture })))
 const NotFound = lazy(() => import('@/pages/public/NotFound').then(m => ({ default: m.NotFound })))
 
-const AdminLogin    = lazy(() => import('@/pages/admin/AdminLogin').then(m => ({ default: m.AdminLogin })))
-const AdminRegister = lazy(() => import('@/pages/admin/AdminRegister').then(m => ({ default: m.AdminRegister })))
+const AdminLogin          = lazy(() => import('@/pages/admin/AdminLogin').then(m => ({ default: m.AdminLogin })))
+const AdminRegister       = lazy(() => import('@/pages/admin/AdminRegister').then(m => ({ default: m.AdminRegister })))
+const AdminForgotPassword = lazy(() => import('@/pages/admin/AdminForgotPassword').then(m => ({ default: m.AdminForgotPassword })))
+const AdminResetPassword  = lazy(() => import('@/pages/admin/AdminResetPassword').then(m => ({ default: m.AdminResetPassword })))
 
 const AdminDashboard    = lazy(() => import('@/pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })))
 const AdminProductMgmt  = lazy(() => import('@/pages/admin/AdminProductManagement').then(m => ({ default: m.AdminProductManagement })))
 const AdminCategoryMgmt = lazy(() => import('@/pages/admin/AdminCategoryManagement').then(m => ({ default: m.AdminCategoryManagement })))
 const AdminAnalytics    = lazy(() => import('@/pages/admin/AdminAnalytics').then(m => ({ default: m.AdminAnalytics })))
 const AdminContent      = lazy(() => import('@/pages/admin/AdminContentManagement').then(m => ({ default: m.AdminContentManagement })))
+const AdminProfile      = lazy(() => import('@/pages/admin/AdminProfile').then(m => ({ default: m.AdminProfile })))
 
 function PageLoader() {
   return (
@@ -48,13 +51,15 @@ export default function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route element={<PublicLayout />}>
-            <Route path="/"        element={<Home />} />
+            <Route path="/"         element={<Home />} />
             <Route path="/produtos" element={<Products />} />
             <Route path="/cultura"  element={<Culture />} />
           </Route>
 
-          <Route path="/admin"          element={<AdminLogin />} />
-          <Route path="/admin/cadastro" element={<AdminRegister />} />
+          <Route path="/admin"                 element={<AdminLogin />} />
+          <Route path="/admin/cadastro"        element={<AdminRegister />} />
+          <Route path="/admin/recuperar-senha" element={<AdminForgotPassword />} />
+          <Route path="/admin/redefinir-senha" element={<AdminResetPassword />} />
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard"  element={<AdminDashboard />} />
@@ -62,6 +67,7 @@ export default function App() {
             <Route path="categories" element={<AdminCategoryMgmt />} />
             <Route path="analytics"  element={<AdminAnalytics />} />
             <Route path="content"    element={<AdminContent />} />
+            <Route path="profile"    element={<AdminProfile />} />
           </Route>
 
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />

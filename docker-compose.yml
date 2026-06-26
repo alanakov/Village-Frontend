@@ -8,11 +8,9 @@ services:
     restart: unless-stopped
     ports:
       - "3000:80"
-    environment:
-      - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/templates
     networks:
-      - aldeiaviva_network
+      - village-admin-backend_aldeiaviva_network
 
 networks:
-  aldeiaviva_network:
+  village-admin-backend_aldeiaviva_network:
     external: true

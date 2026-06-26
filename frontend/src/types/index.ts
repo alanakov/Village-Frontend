@@ -1,8 +1,5 @@
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-
 export type UserType = 'ADMIN'
 
-/** Shape retornada pelo backend em login/profile */
 export interface AuthUserResponse {
   idUser: number
   name: string
@@ -10,14 +7,12 @@ export interface AuthUserResponse {
   userType: UserType
 }
 
-/** POST /api/auth/login → { message, token, user } */
 export interface LoginResponse {
   message: string
   token: string
   user: AuthUserResponse
 }
 
-/** GET /api/auth/profile → { message, user } */
 export interface ProfileResponse {
   message: string
   user: AuthUserResponse
@@ -33,8 +28,6 @@ export interface AuthState {
   user: AuthUserResponse | null
   isAuthenticated: boolean
 }
-
-// ─── Admin ────────────────────────────────────────────────────────────────────
 
 export interface AdminUser {
   idAdmin: number
@@ -61,8 +54,6 @@ export interface UpdateAdminDto {
   newPassword?: string
 }
 
-// ─── Category ─────────────────────────────────────────────────────────────────
-
 export interface Category {
   idCategory: number
   name: string
@@ -70,15 +61,8 @@ export interface Category {
   updatedAt?: string
 }
 
-export interface CreateCategoryDto {
-  name: string
-}
-
-export interface UpdateCategoryDto {
-  name?: string
-}
-
-// ─── Product ──────────────────────────────────────────────────────────────────
+export interface CreateCategoryDto { name: string }
+export interface UpdateCategoryDto { name?: string }
 
 export interface Product {
   idProduct: number
@@ -111,27 +95,24 @@ export interface UpdateProductDto {
   categoryId?: number
 }
 
-// ─── Section ──────────────────────────────────────────────────────────────────
-
 export const SectionName = {
-  homePage: 'Página Inicial',
-  aboutUs: 'Sobre Nós',
+  home: 'Principal',
+  aboutUs: 'Quem Somos',
+  featuredCraft: 'Artesanato em Destaque',
   socialImpact: 'Impacto Social',
   identity: 'Identidade',
-  values: 'Valores',
-  traditionalTechniques: 'Técnicas Tradicionais',
-  preserve: 'Preserve',
-  doubts: 'Dúvidas',
-  aboutProducts: 'Sobre os Produtos',
-  guarantee: 'Garantia',
+  cultureDimensions: 'Dimensões da Nossa Cultura',
+  communityMoments: 'Momentos da Nossa Comunidade',
+  crafts: 'Artesanato',
 } as const
-export type SectionName = typeof SectionName[keyof typeof SectionName]
+
+export type SectionName = (typeof SectionName)[keyof typeof SectionName]
 
 export interface Section {
   idSection: number
   name: SectionName
   title: string
-  subtitle: string
+  subtitle: string | null
   contents?: SectionContent[]
   cards?: SectionCard[]
   images?: SectionImage[]
@@ -143,26 +124,16 @@ export interface Section {
 
 export interface CreateSectionDto {
   name: SectionName
-  title: string
-  subtitle: string
-}
-
-export interface UpdateSectionDto {
-  name?: string
   title?: string
   subtitle?: string
 }
 
-// ─── Content ──────────────────────────────────────────────────────────────────
+export interface UpdateSectionDto {
+  title?: string
+  subtitle?: string
+}
 
-export const ContentType = {
-  P1: 'P1',
-  P2: 'P2',
-  P3: 'P3',
-  P4: 'P4',
-  P5: 'P5',
-} as const
-export type ContentType = typeof ContentType[keyof typeof ContentType]
+export type ContentType = 'P1' | 'P2' | 'P3' | 'P4' | 'P5'
 
 export interface SectionContent {
   idContent: number
@@ -173,12 +144,8 @@ export interface SectionContent {
   updatedAt?: string
 }
 
-export interface ContentDto {
-  type: ContentType
-  content: string
-}
-
-// ─── Stats ────────────────────────────────────────────────────────────────────
+export interface ContentDto { type: ContentType; content: string }
+export interface CreateContentDto { type: ContentType; content: string; sectionId: number }
 
 export interface SectionStat {
   idStat: number
@@ -189,12 +156,8 @@ export interface SectionStat {
   updatedAt?: string
 }
 
-export interface StatsDto {
-  title: string
-  value: string
-}
-
-// ─── Button ───────────────────────────────────────────────────────────────────
+export interface StatsDto { title: string; value: string }
+export interface CreateStatDto { title: string; value: string; sectionId: number }
 
 export interface SectionButton {
   idButton: number
@@ -205,12 +168,8 @@ export interface SectionButton {
   updatedAt?: string
 }
 
-export interface ButtonDto {
-  label: string
-  link: string
-}
-
-// ─── Card ─────────────────────────────────────────────────────────────────────
+export interface ButtonDto { label: string; link: string }
+export interface CreateButtonDto { label: string; link: string; sectionId: number }
 
 export interface SectionCard {
   idCard: number
@@ -222,13 +181,8 @@ export interface SectionCard {
   updatedAt?: string
 }
 
-export interface CardDto {
-  title: string
-  description: string
-  icon: string
-}
-
-// ─── Image ────────────────────────────────────────────────────────────────────
+export interface CardDto { title: string; description: string; icon: string }
+export interface CreateCardDto { title: string; description: string; icon: string; sectionId: number }
 
 export interface SectionImage {
   idImage: number
@@ -239,16 +193,8 @@ export interface SectionImage {
   updatedAt?: string
 }
 
-export interface CreateImageDto {
-  altText: string
-  sectionId: number
-}
-
-export interface UpdateImageDto {
-  altText?: string
-}
-
-// ─── Full Section ─────────────────────────────────────────────────────────────
+export interface CreateImageDto { altText: string; sectionId: number }
+export interface UpdateImageDto { altText?: string }
 
 export interface CreateFullSectionDto {
   section?: CreateSectionDto
@@ -258,8 +204,6 @@ export interface CreateFullSectionDto {
   buttons?: ButtonDto[]
 }
 
-// ─── UI ───────────────────────────────────────────────────────────────────────
-
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error'
 
 export interface ApiError {
@@ -267,8 +211,6 @@ export interface ApiError {
   statusCode: number
   error?: string
 }
-
-// ─── Institutional (local CMS — sem endpoint no backend) ──────────────────────
 
 export interface InstitutionalContent {
   homeTitle: string
