@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Save, Trash2, Lock } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { IconPicker } from '@/components/ui/IconPicker'
 import type { SectionCard } from '@/types'
 
 interface CardFieldProps {
@@ -13,11 +14,11 @@ interface CardFieldProps {
 }
 
 export function CardField({ item, subtitleLabel = 'Subtítulo', onSave, onDelete, disabled, canDelete }: CardFieldProps) {
-  const [title, setTitle]           = useState(item.title)
-  const [description, setDescription] = useState(item.description)
-  const [icon, setIcon]             = useState(item.icon)
-  const [confirmDelete, setConfirmDelete] = useState(false)
-  const [deleting, setDeleting]     = useState(false)
+  const [title, setTitle]                   = useState(item.title)
+  const [description, setDescription]       = useState(item.description)
+  const [icon, setIcon]                     = useState(item.icon)
+  const [confirmDelete, setConfirmDelete]   = useState(false)
+  const [deleting, setDeleting]             = useState(false)
 
   const isDirty = title !== item.title || description !== item.description || icon !== item.icon
 
@@ -28,29 +29,22 @@ export function CardField({ item, subtitleLabel = 'Subtítulo', onSave, onDelete
   }
 
   return (
-    <div className="p-3 bg-[var(--muted)] rounded-xl border border-[var(--border)] space-y-2">
-      <div className="grid grid-cols-2 gap-2">
-        <div className="space-y-1">
-          <label className="text-xs font-semibold text-[var(--muted-foreground)] font-ui">Título</label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={disabled}
-            className="w-full px-3 py-1.5 rounded-lg border border-[var(--border)] bg-white text-sm font-ui focus:outline-none focus:ring-1 focus:ring-[var(--primary)] disabled:opacity-50"
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-semibold text-[var(--muted-foreground)] font-ui">Ícone</label>
-          <input
-            value={icon}
-            onChange={(e) => setIcon(e.target.value)}
-            placeholder="ex: leaf, star..."
-            disabled={disabled}
-            className="w-full px-3 py-1.5 rounded-lg border border-[var(--border)] bg-white text-sm font-ui focus:outline-none focus:ring-1 focus:ring-[var(--primary)] disabled:opacity-50"
-          />
-        </div>
+    <div className="p-3 bg-[var(--muted)] rounded-xl border border-[var(--border)] space-y-3">
+      {/* Título */}
+      <div className="space-y-1">
+        <label className="text-xs font-semibold text-[var(--muted-foreground)] font-ui">Título</label>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          disabled={disabled}
+          className="w-full px-3 py-1.5 rounded-lg border border-[var(--border)] bg-white text-sm font-ui focus:outline-none focus:ring-1 focus:ring-[var(--primary)] disabled:opacity-50"
+        />
       </div>
 
+      {/* Ícone via seletor visual */}
+      <IconPicker value={icon} onChange={setIcon} disabled={disabled} />
+
+      {/* Subtítulo + ações */}
       <div className="space-y-1">
         <label className="text-xs font-semibold text-[var(--muted-foreground)] font-ui">{subtitleLabel}</label>
         <div className="flex gap-2">
@@ -66,8 +60,8 @@ export function CardField({ item, subtitleLabel = 'Subtítulo', onSave, onDelete
               <button
                 onClick={() => onSave(item.idCard, title, description, icon)}
                 disabled={disabled}
-                title="Salvar"
-                className="p-1.5 text-[var(--primary)] hover:bg-[var(--primary)]/10 rounded-lg disabled:opacity-50"
+                title="Salvar alterações"
+                className="p-1.5 text-white bg-[var(--primary)] hover:bg-[var(--primary)]/90 rounded-lg disabled:opacity-50 transition-colors"
               >
                 <Save className="w-3.5 h-3.5" />
               </button>
@@ -98,7 +92,7 @@ export function CardField({ item, subtitleLabel = 'Subtítulo', onSave, onDelete
         onClose={() => setConfirmDelete(false)}
         onConfirm={handleDelete}
         title="Excluir card"
-        message={`Tem certeza que deseja excluir o card "${item.title}"?`}
+        message={`Tem certeza que deseja excluir o card "${item.title}"? Esta ação é irreversível.`}
         confirmLabel="Excluir"
         loading={deleting}
         danger

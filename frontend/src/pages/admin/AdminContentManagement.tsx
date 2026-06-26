@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Eye, Plus } from 'lucide-react'
 import { useSections } from '@/hooks/useSections'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { Button } from '@/components/ui/Button'
 import { SectionNav } from '@/components/admin/content/SectionNav'
 import { SectionPanel } from '@/components/admin/content/SectionPanel'
-import { GeneralSettingsPanel } from '@/components/admin/content/GeneralSettingsPanel'
 import { CreateSectionModal } from '@/components/admin/content/CreateSectionModal'
 import type { ActiveView } from '@/components/admin/content/types'
 
@@ -20,12 +20,12 @@ export function AdminContentManagement() {
   const [activeView, setActiveView] = useState<ActiveView | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
 
-  // Resolve what's currently displayed
-  const resolvedView: ActiveView =
-    activeView ?? (sections.length > 0 ? sections[0].idSection : 'general')
+  // Resolve what's currently displayed; null when there are no sections yet
+  const resolvedView: ActiveView | null =
+    activeView ?? (sections.length > 0 ? sections[0].idSection : null)
 
   const activeSection =
-    typeof resolvedView === 'number'
+    resolvedView !== null
       ? sections.find((s) => s.idSection === resolvedView) ?? null
       : null
 
@@ -34,7 +34,7 @@ export function AdminContentManagement() {
     deleteSection(deletedId)
     if (resolvedView === deletedId) {
       const remaining = sections.filter((s) => s.idSection !== deletedId)
-      setActiveView(remaining.length > 0 ? remaining[0].idSection : 'general')
+      setActiveView(remaining.length > 0 ? remaining[0].idSection : null)
     }
   }
 
@@ -49,19 +49,19 @@ export function AdminContentManagement() {
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <button
+          <Button
+            variant="primary"
             onClick={() => setShowCreateModal(true)}
             disabled={sections.length >= 10}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white font-ui text-sm font-semibold hover:bg-[var(--primary)]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />
             Nova seção
-          </button>
+          </Button>
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)]/5 font-ui text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)]/5 font-ui text-base font-semibold transition-colors"
           >
             <Eye className="w-4 h-4" />
             Ver site público
@@ -103,8 +103,6 @@ export function AdminContentManagement() {
               <Skeleton className="h-48 rounded-2xl" />
               <Skeleton className="h-32 rounded-2xl" />
             </div>
-          ) : resolvedView === 'general' ? (
-            <GeneralSettingsPanel />
           ) : activeSection ? (
             <SectionPanel
               key={activeSection.idSection}
@@ -126,13 +124,10 @@ export function AdminContentManagement() {
                   Crie a primeira seção do site para começar a gerenciar o conteúdo. O sistema suporta até 10 seções distintas.
                 </p>
               </div>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--primary)] text-white font-ui text-sm font-semibold hover:bg-[var(--primary)]/90 transition-colors"
-              >
+              <Button variant="primary" size="lg" onClick={() => setShowCreateModal(true)}>
                 <Plus className="w-4 h-4" />
                 Criar primeira seção
-              </button>
+              </Button>
             </div>
           )}
         </div>

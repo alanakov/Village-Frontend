@@ -54,7 +54,7 @@ export function ButtonField({ item, onSave, onDelete, disabled }: ButtonFieldPro
               <button
                 onClick={() => onSave(item.idButton, label, link)}
                 disabled={disabled}
-                className="shrink-0 p-1.5 text-[var(--primary)] hover:bg-[var(--primary)]/10 rounded-lg disabled:opacity-50"
+                className="shrink-0 p-1.5 text-white bg-[var(--primary)] hover:bg-[var(--primary)]/90 rounded-lg disabled:opacity-50 transition-colors"
                 title="Salvar"
               >
                 <Save className="w-3.5 h-3.5" />

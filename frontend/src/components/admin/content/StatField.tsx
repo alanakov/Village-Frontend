@@ -53,7 +53,7 @@ export function StatField({ item, onSave, onDelete, disabled }: StatFieldProps) 
               <button
                 onClick={() => onSave(item.idStat, title, value)}
                 disabled={disabled}
-                className="shrink-0 p-1.5 text-[var(--primary)] hover:bg-[var(--primary)]/10 rounded-lg disabled:opacity-50"
+                className="shrink-0 p-1.5 text-white bg-[var(--primary)] hover:bg-[var(--primary)]/90 rounded-lg disabled:opacity-50 transition-colors"
                 title="Salvar"
               >
                 <Save className="w-3.5 h-3.5" />

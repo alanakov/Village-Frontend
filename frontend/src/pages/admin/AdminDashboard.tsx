@@ -10,6 +10,7 @@ import { useCategories } from '@/hooks/useCategories'
 import { useSections } from '@/hooks/useSections'
 import { useAuthStore } from '@/store/authStore'
 import { formatPrice } from '@/utils/helpers'
+import { getUploadUrl } from '@/services/api'
 
 export function AdminDashboard() {
   const { products, loading: loadingProducts } = useProducts()
@@ -122,7 +123,7 @@ export function AdminDashboard() {
                   >
                     <td className="py-4 px-5">
                       <img
-                        src={p.imageUrl}
+                        src={getUploadUrl(p.imageUrl)}
                         alt={p.name}
                         className="w-10 h-10 rounded-lg object-cover"
                         onError={(e) => {

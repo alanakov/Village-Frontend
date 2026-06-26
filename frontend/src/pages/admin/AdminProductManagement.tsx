@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, Search, Image } from 'lucide-react'
 import { productUploadSchema, type ProductUploadFormData, type ProductUploadFormInput } from '@/utils/validations'
 import { useProducts } from '@/hooks/useProducts'
 import { useImageUpload } from '@/hooks/useImageUpload'
+import { usePagination } from '@/hooks/usePagination'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
@@ -12,6 +13,8 @@ import { Modal } from '@/components/ui/Modal'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Badge } from '@/components/ui/Badge'
+import { Pagination } from '@/components/ui/Pagination'
+import { SortableHeader } from '@/components/ui/SortableHeader'
 import { ImageUploadInput } from '@/components/ui/ImageUploadInput'
 import { formatPrice, getApiErrorMessage } from '@/utils/helpers'
 import { getUploadUrl } from '@/services/api'
@@ -22,9 +25,9 @@ export function AdminProductManagement() {
   const { products, categories, loading, create, update, remove } = useProducts()
   const imageUpload = useImageUpload()
 
-  const [modalOpen, setModalOpen] = useState(false)
-  const [editing, setEditing] = useState<Product | null>(null)
-  const [search, setSearch] = useState('')
+  const [modalOpen, setModalOpen]           = useState(false)
+  const [editing, setEditing]               = useState<Product | null>(null)
+  const [search, setSearch]                 = useState('')
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
 
   const {
@@ -52,8 +55,22 @@ export function AdminProductManagement() {
     (p) =>
       !search ||
       p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase())
+      p.description.toLowerCase().includes(search.toLowerCase()) ||
+      (p.category?.name ?? '').toLowerCase().includes(search.toLowerCase())
   )
+
+  // ── Paginação e ordenação ──────────────────────────────────────────────────
+
+  const pagination = usePagination<Product>({
+    items: filtered,
+    pageSize: 10,
+    defaultSortKey: 'name',
+    defaultSortOrder: 'asc',
+  })
+
+  // Reset para página 1 quando o filtro de busca muda
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { pagination.setPage(1) }, [search])
 
   // ── Controle do modal ──────────────────────────────────────────────────────
 
@@ -126,7 +143,7 @@ export function AdminProductManagement() {
   const handleDelete = async (id: number) => {
     try {
       await remove(id)
-      toast.success('Produto excluído.')
+      toast.success('Produto excluído com sucesso.')
       setDeleteConfirmId(null)
     } catch (err) {
       toast.error(getApiErrorMessage(err))
@@ -158,7 +175,7 @@ export function AdminProductManagement() {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
         <input
           type="search"
-          placeholder="Buscar produtos..."
+          placeholder="Buscar por nome, descrição ou categoria..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-ui text-sm"
@@ -176,7 +193,7 @@ export function AdminProductManagement() {
         ) : filtered.length === 0 ? (
           <EmptyState
             title="Nenhum produto encontrado"
-            description={search ? 'Tente outros termos.' : 'Crie seu primeiro produto.'}
+            description={search ? 'Tente outros termos de busca.' : 'Crie seu primeiro produto clicando em "Novo Produto".'}
             action={
               !search ? (
                 <Button onClick={openCreate}>
@@ -186,81 +203,128 @@ export function AdminProductManagement() {
             }
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-[var(--muted)] border-b border-[var(--border)]">
-                  {['Imagem', 'Nome', 'Categoria', 'Preço', 'Tamanho', 'Ações'].map((h) => (
-                    <th
-                      key={h}
-                      className="text-left py-3 px-5 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider font-ui whitespace-nowrap"
-                    >
-                      {h}
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-[var(--muted)] border-b border-[var(--border)]">
+                    <th className="text-left py-3 px-5 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider font-ui whitespace-nowrap">
+                      Imagem
                     </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]">
-                {filtered.map((p) => (
-                  <tr key={p.idProduct} className="hover:bg-[var(--muted)]/40 transition-colors">
-                    <td className="py-4 px-5">
-                      {p.imageUrl ? (
-                        <img
-                          src={getUploadUrl(p.imageUrl)}
-                          alt={p.name}
-                          className="w-12 h-12 rounded-xl object-cover"
-                          onError={(e) => {
-                            ;(e.target as HTMLImageElement).style.display = 'none'
-                          }}
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-xl bg-[var(--muted)] flex items-center justify-center">
-                          <Image className="w-5 h-5 text-[var(--muted-foreground)]" />
-                        </div>
-                      )}
-                    </td>
-                    <td className="py-4 px-5">
-                      <p className="font-semibold text-sm text-[var(--foreground)] font-ui">
-                        {p.name}
-                      </p>
-                      <p className="text-xs text-[var(--muted-foreground)] mt-0.5 max-w-[200px] truncate">
-                        {p.description}
-                      </p>
-                    </td>
-                    <td className="py-4 px-5">
-                      <Badge variant="primary">
-                        {p.category?.name ?? `Cat. ${p.categoryId}`}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-5 font-semibold text-[var(--primary)] font-ui whitespace-nowrap">
-                      {formatPrice(Number(p.price))}
-                    </td>
-                    <td className="py-4 px-5 text-sm text-[var(--muted-foreground)] font-ui">
-                      {p.size || '—'}
-                    </td>
-                    <td className="py-4 px-5">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => openEdit(p)}
-                          className="p-2 rounded-lg hover:bg-[var(--primary)]/10 text-[var(--primary)] transition-colors"
-                          aria-label={`Editar ${p.name}`}
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirmId(p.idProduct)}
-                          className="p-2 rounded-lg hover:bg-[var(--destructive)]/10 text-[var(--destructive)] transition-colors"
-                          aria-label={`Excluir ${p.name}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
+                    <SortableHeader
+                      label="Nome"
+                      sortKey="name"
+                      activeSortKey={pagination.sortKey as string | null}
+                      sortOrder={pagination.sortOrder}
+                      onSort={(k) => pagination.setSort(k as keyof Product)}
+                    />
+                    <SortableHeader
+                      label="Categoria"
+                      sortKey="categoryId"
+                      activeSortKey={pagination.sortKey as string | null}
+                      sortOrder={pagination.sortOrder}
+                      onSort={(k) => pagination.setSort(k as keyof Product)}
+                    />
+                    <SortableHeader
+                      label="Preço"
+                      sortKey="price"
+                      activeSortKey={pagination.sortKey as string | null}
+                      sortOrder={pagination.sortOrder}
+                      onSort={(k) => pagination.setSort(k as keyof Product)}
+                    />
+                    <th className="text-left py-3 px-5 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider font-ui whitespace-nowrap">
+                      Tamanho
+                    </th>
+                    <th className="text-left py-3 px-5 text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider font-ui whitespace-nowrap">
+                      Ações
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {pagination.paged.map((p) => (
+                    <tr key={p.idProduct} className="hover:bg-[var(--muted)]/40 transition-colors">
+                      <td className="py-4 px-5">
+                        {p.imageUrl ? (
+                          <img
+                            src={getUploadUrl(p.imageUrl)}
+                            alt={p.name}
+                            className="w-12 h-12 rounded-xl object-cover"
+                            onError={(e) => {
+                              ;(e.target as HTMLImageElement).style.display = 'none'
+                            }}
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-[var(--muted)] flex items-center justify-center">
+                            <Image className="w-5 h-5 text-[var(--muted-foreground)]" />
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-4 px-5">
+                        <p className="font-semibold text-sm text-[var(--foreground)] font-ui">
+                          {p.name}
+                        </p>
+                        <p className="text-xs text-[var(--muted-foreground)] mt-0.5 max-w-[200px] truncate">
+                          {p.description}
+                        </p>
+                      </td>
+                      <td className="py-4 px-5">
+                        <Badge variant="primary">
+                          {p.category?.name ?? `Cat. ${p.categoryId}`}
+                        </Badge>
+                      </td>
+                      <td className="py-4 px-5 font-semibold text-[var(--primary)] font-ui whitespace-nowrap">
+                        {formatPrice(Number(p.price))}
+                      </td>
+                      <td className="py-4 px-5 text-sm text-[var(--muted-foreground)] font-ui">
+                        {p.size || '—'}
+                      </td>
+                      <td className="py-4 px-5">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => openEdit(p)}
+                            className="p-2 rounded-lg hover:bg-[var(--primary)]/10 text-[var(--primary)] transition-colors"
+                            aria-label={`Editar ${p.name}`}
+                            title="Editar produto"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirmId(p.idProduct)}
+                            className="p-2 rounded-lg hover:bg-[var(--destructive)]/10 text-[var(--destructive)] transition-colors"
+                            aria-label={`Excluir ${p.name}`}
+                            title="Excluir produto"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Paginação */}
+            <div className="px-5 border-t border-[var(--border)]">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalCount={pagination.totalCount}
+                pageSize={pagination.pageSize}
+                onPageChange={pagination.setPage}
+                onPageSizeChange={pagination.setPageSize}
+                pageSizeOptions={[5, 10, 20, 50]}
+                canGoPrev={pagination.canGoPrev}
+                canGoNext={pagination.canGoNext}
+                goFirst={pagination.goFirst}
+                goLast={pagination.goLast}
+                goPrev={pagination.goPrev}
+                goNext={pagination.goNext}
+                itemLabel="produto"
+                itemLabelPlural="produtos"
+              />
+            </div>
+          </>
         )}
       </div>
 
@@ -294,7 +358,7 @@ export function AdminProductManagement() {
                 onChange={(e) => setValue('categoryId', Number(e.target.value))}
                 defaultValue={editing?.categoryId ?? ''}
               >
-                <option value="">Selecione...</option>
+                <option value="">Selecione uma categoria...</option>
                 {categories.map((c) => (
                   <option key={c.idCategory} value={c.idCategory}>
                     {c.name}
@@ -380,7 +444,7 @@ export function AdminProductManagement() {
         className="max-w-sm"
       >
         <p className="text-[var(--muted-foreground)] font-ui mb-6">
-          Tem certeza? Esta ação não pode ser desfeita.
+          Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.
         </p>
         <div className="flex gap-3 justify-end">
           <Button variant="ghost" onClick={() => setDeleteConfirmId(null)}>
@@ -390,7 +454,7 @@ export function AdminProductManagement() {
             variant="danger"
             onClick={() => deleteConfirmId !== null && handleDelete(deleteConfirmId)}
           >
-            <Trash2 className="w-4 h-4" /> Excluir
+            <Trash2 className="w-4 h-4" /> Excluir produto
           </Button>
         </div>
       </Modal>

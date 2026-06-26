@@ -50,7 +50,8 @@ export function ContentField({ item, onSave, onDelete, disabled }: ContentFieldP
             <button
               onClick={() => onSave(item.idContent, text, type)}
               disabled={disabled}
-              className="flex items-center gap-1 text-xs text-[var(--primary)] font-semibold font-ui hover:underline disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs text-white bg-[var(--primary)] rounded-lg font-semibold font-ui hover:bg-[var(--primary)]/90 transition-colors disabled:opacity-50"
+              title="Salvar alterações"
             >
               <Save className="w-3 h-3" />
               Salvar
