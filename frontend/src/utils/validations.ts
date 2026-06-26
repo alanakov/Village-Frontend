@@ -155,3 +155,20 @@ export const productUploadSchema = z.object({
 })
 export type ProductUploadFormData = z.infer<typeof productUploadSchema>
 export type ProductUploadFormInput = z.input<typeof productUploadSchema>
+
+// ── Edição de Perfil ───────────────────────────────────────────────────────────
+// Apenas nome e telefone são editáveis. E-mail é somente leitura.
+// Senha é gerenciada pelo fluxo de redefinição já existente.
+
+export const updateProfileSchema = z.object({
+  name: z
+    .string()
+    .min(2, 'Nome deve ter ao menos 2 caracteres')
+    .max(100, 'Nome muito longo'),
+  phone: z
+    .string()
+    .min(1, 'Telefone é obrigatório')
+    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, 'Telefone inválido. Use o formato (XX) XXXXX-XXXX'),
+})
+
+export type UpdateProfileFormData = z.infer<typeof updateProfileSchema>

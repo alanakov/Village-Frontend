@@ -1,17 +1,16 @@
 import { useState } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Mail, Leaf, ArrowLeft, CheckCircle } from 'lucide-react'
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/utils/validations'
 import { adminService } from '@/services/adminService'
-import { useAuthStore } from '@/store/authStore'
 import { getApiErrorMessage } from '@/utils/helpers'
 import { Button } from '@/components/ui/Button'
 import { maskEmail } from '@/utils/masks'
 
 export function AdminForgotPassword() {
-  const { isAuthenticated } = useAuthStore()
+
   const [serverError, setServerError] = useState('')
   const [emailSent, setEmailSent] = useState(false)
   const [sentToEmail, setSentToEmail] = useState('')
@@ -22,8 +21,8 @@ export function AdminForgotPassword() {
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormData>({ resolver: zodResolver(forgotPasswordSchema) })
 
-  // Usuário já autenticado não precisa desta tela
-  if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />
+  // Não redireciona usuários autenticados: o fluxo de alteração de senha
+  // a partir de "Meu Perfil" passa por aqui com sessão ativa.
 
   const emailReg = register('email')
 

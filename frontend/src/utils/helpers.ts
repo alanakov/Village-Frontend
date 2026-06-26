@@ -48,6 +48,11 @@ const FRIENDLY_MESSAGES: Record<string, string> = {
 
   // Administrador / Convite
   'Admin already exists': 'Já existe um administrador cadastrado com este e-mail.',
+  // Perfil
+  'Você não tem permissão para editar este usuário': 'Você só pode editar o seu próprio perfil.',
+  'O email não pode ser alterado': 'O e-mail não pode ser alterado.',
+  'Erro ao atualizar administrador': 'Não foi possível salvar as alterações. Tente novamente.',
+  'Administrador não encontrado!': 'Administrador não encontrado.',
   'Invalid invite token': 'O link de convite é inválido ou expirou. Solicite um novo convite.',
   'Invite token expired': 'O link de convite expirou. Solicite um novo convite ao administrador.',
 
