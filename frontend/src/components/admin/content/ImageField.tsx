@@ -109,7 +109,7 @@ export function ImageField({ item, onUpdated, disabled }: ImageFieldProps) {
       {isDirty && !uploading && (
         <button
           onClick={handleSave}
-          className="w-full py-1.5 text-xs font-semibold text-[var(--primary)] border border-[var(--primary)]/30 rounded-lg hover:bg-[var(--primary)]/5 transition-colors"
+          className="w-full py-2 text-xs font-semibold text-white bg-[var(--primary)] rounded-lg hover:bg-[var(--primary)]/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ring)]"
         >
           Salvar alterações
         </button>

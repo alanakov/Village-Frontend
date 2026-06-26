@@ -14,7 +14,7 @@ export function NotFound() {
         </p>
         <Link
           to="/"
-          className="inline-flex items-center gap-2 bg-[var(--primary)] text-white px-6 py-3 rounded-xl font-semibold font-ui hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 bg-[var(--primary)] text-white px-5 py-2.5 rounded-xl font-semibold font-ui text-base hover:opacity-90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2"
         >
           <Home className="w-4 h-4" />
           Voltar ao início

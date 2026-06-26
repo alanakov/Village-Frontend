@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RefreshCw, ChevronDown, ChevronRight, Settings, Plus } from 'lucide-react'
+import { RefreshCw, ChevronDown, ChevronRight, Plus } from 'lucide-react'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/utils/helpers'
 import { getConfig, PAGE_GROUPS, SECTION_CONFIGS } from './sectionConfig'
@@ -9,7 +9,7 @@ import type { ActiveView } from './types'
 
 interface SectionNavProps {
   sections: Section[]
-  activeView: ActiveView
+  activeView: ActiveView | null
   onSelect: (view: ActiveView) => void
   onRefetch: () => void
   onCreateSection: () => void
@@ -157,28 +157,13 @@ export function SectionNav({
       </div>
 
       <div className="border-t border-[var(--border)] mx-3 my-3" />
-      <div className="px-1 pb-1 space-y-1">
-        <div className="px-3 py-1">
-          <p className="text-xs text-[var(--muted-foreground)] font-ui">
-            <span className="font-semibold text-[var(--foreground)]">{sections.length}</span> de {MAX} seções criadas
-          </p>
-          <div className="mt-1 h-1 bg-[var(--border)] rounded-full overflow-hidden">
-            <div className="h-full bg-[var(--primary)] rounded-full transition-all" style={{ width: `${(sections.length / MAX) * 100}%` }} />
-          </div>
+      <div className="px-4 pb-3">
+        <p className="text-xs text-[var(--muted-foreground)] font-ui">
+          <span className="font-semibold text-[var(--foreground)]">{sections.length}</span> de {MAX} seções criadas
+        </p>
+        <div className="mt-1 h-1 bg-[var(--border)] rounded-full overflow-hidden">
+          <div className="h-full bg-[var(--primary)] rounded-full transition-all" style={{ width: `${(sections.length / MAX) * 100}%` }} />
         </div>
-        <button
-          onClick={() => onSelect('general')}
-          className={cn(
-            'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all duration-150 group',
-            activeView === 'general' ? 'bg-[var(--primary)] text-white' : 'hover:bg-[var(--muted)] text-[var(--foreground)]'
-          )}
-        >
-          <Settings className={cn('w-4 h-4 shrink-0', activeView === 'general' ? 'text-white' : 'text-[var(--primary)]/60')} />
-          <span className={cn('flex-1 text-sm font-semibold font-ui', activeView === 'general' ? 'text-white' : 'text-[var(--foreground)]')}>
-            Configurações Gerais
-          </span>
-          <ChevronRight className={cn('w-3.5 h-3.5', activeView === 'general' ? 'text-white' : 'text-[var(--muted-foreground)] opacity-0 group-hover:opacity-100 transition-all')} />
-        </button>
       </div>
     </nav>
   )

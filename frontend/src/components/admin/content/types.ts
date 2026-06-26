@@ -1,1 +1,1 @@
-export type ActiveView = number | 'general'
+export type ActiveView = number

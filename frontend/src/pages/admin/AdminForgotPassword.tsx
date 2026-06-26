@@ -86,7 +86,7 @@ export function AdminForgotPassword() {
 
               <Link
                 to="/admin/redefinir-senha"
-                className="inline-flex items-center justify-center gap-2 w-full bg-[var(--primary)] text-white px-6 py-3.5 rounded-xl font-semibold font-ui text-lg hover:opacity-90 transition-opacity"
+                className="inline-flex items-center justify-center gap-2 w-full bg-[var(--primary)] text-white px-8 py-3.5 rounded-xl font-semibold font-ui text-lg hover:opacity-90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2"
               >
                 Inserir o código
               </Link>

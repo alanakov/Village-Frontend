@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Lock, Info } from 'lucide-react'
 import { SECTION_CONFIGS, getConfig } from './sectionConfig'
+import { getApiErrorMessage } from '@/utils/helpers'
 import { SectionName } from '@/types'
 import type { Section, CreateFullSectionDto } from '@/types'
 
@@ -50,8 +51,7 @@ export function CreateSectionModal({ open, onClose, existingSections, onCreate }
       await onCreate(dto)
       handleClose()
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: unknown } } })?.response?.data?.message
-      setError(typeof msg === 'string' ? msg : 'Erro ao criar seção.')
+      setError(getApiErrorMessage(err))
     } finally {
       setLoading(false)
     }

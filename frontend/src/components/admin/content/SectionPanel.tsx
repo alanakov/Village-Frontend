@@ -15,6 +15,7 @@ import { CardField } from './CardField'
 import { ImageField } from './ImageField'
 import { AddSubEntityModal } from './AddSubEntityModal'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { Button } from '@/components/ui/Button'
 import type { Section, ContentType } from '@/types'
 import type { SubEntityType } from './AddSubEntityModal'
 
@@ -187,22 +188,24 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
                   </div>
                 )}
                 <div className="flex gap-2">
-                  <button
+                  <Button
+                    size="sm"
+                    variant="primary"
                     onClick={handleSaveHeader}
-                    disabled={savingHeader}
-                    className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[var(--primary)] rounded-xl hover:bg-[var(--primary)]/90 disabled:opacity-50 font-ui"
+                    loading={savingHeader}
                   >
                     <Check className="w-3.5 h-3.5" />
                     {savingHeader ? 'Salvando...' : 'Salvar'}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
                     onClick={() => { setEditTitle(section.title ?? ''); setEditSubtitle(section.subtitle ?? ''); setEditingHeader(false) }}
                     disabled={savingHeader}
-                    className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[var(--muted-foreground)] bg-[var(--muted)] rounded-xl hover:bg-[var(--border)] disabled:opacity-50 font-ui"
                   >
                     <X className="w-3.5 h-3.5" />
                     Cancelar
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -382,7 +385,7 @@ function SubEntityBlock({
         {canAdd && (
           <button
             onClick={onAdd}
-            className="ml-auto flex items-center gap-1 text-xs font-semibold text-[var(--primary)] font-ui hover:underline"
+            className="ml-auto flex items-center gap-1 text-xs font-semibold text-[var(--primary)] font-ui hover:underline transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             Adicionar

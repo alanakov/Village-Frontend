@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { ImageUploadInput } from '@/components/ui/ImageUploadInput'
+import { IconPicker } from '@/components/ui/IconPicker'
 import { validateImageFile } from '@/utils/fileValidation'
 import { contentService } from '@/services/contentService'
 import { cardService } from '@/services/cardService'
@@ -118,13 +119,11 @@ export function AddSubEntityModal({
         {type === 'card' && (
           <>
             <Input label="Título" value={cardTitle} onChange={(e) => setCardTitle(e.target.value)} required />
-            <Input
-              label="Ícone"
+            <IconPicker
               value={cardIcon}
-              onChange={(e) => setCardIcon(e.target.value)}
-              placeholder="ex: leaf, heart, star, users..."
-              required
-              hint="Identificador do ícone utilizado pelo site público"
+              onChange={setCardIcon}
+              disabled={loading}
+              error={!cardIcon && error ? 'Selecione um ícone' : undefined}
             />
             <Textarea
               label={config.cards.subtitleLabel ?? 'Subtítulo'}
