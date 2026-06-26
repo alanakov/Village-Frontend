@@ -5,8 +5,6 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/utils/helpers'
 
-// ─── Ícones disponíveis para os cards de conteúdo ────────────────────────────
-
 export interface IconOption {
   name: string      // valor persistido no banco
   label: string     // rótulo visível
@@ -41,8 +39,6 @@ export function IconPicker({ value, onChange, disabled, error }: IconPickerProps
       <label className="text-xs font-semibold text-[var(--muted-foreground)]">
         Ícone <span className="text-[var(--destructive)]">*</span>
       </label>
-
-      {/* Grade de ícones */}
       <div
         className={cn(
           'grid grid-cols-4 gap-1.5 p-2 rounded-xl border bg-white transition-all',
@@ -76,8 +72,6 @@ export function IconPicker({ value, onChange, disabled, error }: IconPickerProps
           )
         })}
       </div>
-
-      {/* Valor selecionado ou placeholder */}
       {value ? (
         <p className="text-xs text-[var(--muted-foreground)] flex items-center gap-1">
           Selecionado:

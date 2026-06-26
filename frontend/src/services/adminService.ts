@@ -33,19 +33,11 @@ export const adminService = {
     return data
   },
 
-  /**
-   * POST /api/admin/invite (autenticado)
-   * Envia convite por e-mail para um novo administrador.
-   */
   async sendInvite(email: string): Promise<{ message: string }> {
     const { data } = await api.post<{ message: string }>('/admin/invite', { email })
     return data
   },
 
-  /**
-   * POST /api/admin/invite/validate
-   * Verifica se o token de convite é válido e retorna o e-mail vinculado.
-   */
   async validateInviteToken(token: string): Promise<InviteValidationResponse> {
     const { data } = await api.post<InviteValidationResponse>('/admin/invite/validate', { token })
     return data

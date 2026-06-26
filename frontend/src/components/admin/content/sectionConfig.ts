@@ -5,13 +5,9 @@ import {
 } from 'lucide-react'
 import { SectionName } from '@/types'
 
-// ─── Config type ──────────────────────────────────────────────────────────────
-
 export interface SectionFieldConfig {
   allowed: boolean
-  /** Max number of items. undefined = unlimited */
   max?: number
-  /** Min number of items (for required fields like cards) */
   min?: number
 }
 
@@ -21,32 +17,19 @@ export interface SectionConfig {
   group: 'home' | 'historia' | 'artesanato'
   Icon: LucideIcon
   description: string
-
-  // ── Title / Subtitle ───────────────────────────────────────────────────────
-  /** false = title is fixed, admin cannot edit */
   titleEditable: boolean
   fixedTitle?: string
   subtitleEditable: boolean
   fixedSubtitle?: string
-
-  // ── Sub-entities ───────────────────────────────────────────────────────────
   contents: SectionFieldConfig & { label: string }
   cards:    SectionFieldConfig & { subtitleLabel: string }
   images:   SectionFieldConfig
   stats:    SectionFieldConfig
-
-  // ── Buttons ────────────────────────────────────────────────────────────────
-  /** 'none' = no buttons; 'fixed' = hardcoded labels, shown for info only */
   buttons: 'none' | 'fixed'
   fixedButtonLabels?: string[]
 }
 
-// ─── Config table ─────────────────────────────────────────────────────────────
-
 export const SECTION_CONFIGS: SectionConfig[] = [
-
-  // ── HOME ──────────────────────────────────────────────────────────────────
-
   {
     sectionName: SectionName.home,
     displayLabel: 'Principal',
@@ -62,7 +45,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     buttons:  'fixed',
     fixedButtonLabels: ['Conheça o Artesanato', 'Nossa História'],
   },
-
   {
     sectionName: SectionName.aboutUs,
     displayLabel: 'Quem Somos',
@@ -79,7 +61,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     buttons:  'fixed',
     fixedButtonLabels: ['Conheça Nossa Cultura'],
   },
-
   {
     sectionName: SectionName.featuredCraft,
     displayLabel: 'Artesanato em Destaque',
@@ -96,7 +77,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     buttons:  'fixed',
     fixedButtonLabels: ['Ver Todos os Artesanatos'],
   },
-
   {
     sectionName: SectionName.socialImpact,
     displayLabel: 'Impacto Social',
@@ -113,9 +93,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     buttons:  'fixed',
     fixedButtonLabels: ['Conheça Mais Sobre Nossa Cultura'],
   },
-
-  // ── NOSSA HISTÓRIA ────────────────────────────────────────────────────────
-
   {
     sectionName: SectionName.identity,
     displayLabel: 'Identidade',
@@ -130,7 +107,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     stats:    { allowed: false },
     buttons:  'none',
   },
-
   {
     sectionName: SectionName.cultureDimensions,
     displayLabel: 'Dimensões da Nossa Cultura',
@@ -146,7 +122,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     stats:    { allowed: false },
     buttons:  'none',
   },
-
   {
     sectionName: SectionName.communityMoments,
     displayLabel: 'Momentos da Nossa Comunidade',
@@ -162,9 +137,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     stats:    { allowed: false },
     buttons:  'none',
   },
-
-  // ── ARTESANATO ────────────────────────────────────────────────────────────
-
   {
     sectionName: SectionName.crafts,
     displayLabel: 'Artesanato',
@@ -191,8 +163,6 @@ export function getConfig(sectionName: string): SectionConfig | undefined {
   return SECTION_CONFIG_MAP[sectionName]
 }
 
-// ─── Group metadata ───────────────────────────────────────────────────────────
-
 export type PageGroupKey = 'home' | 'historia' | 'artesanato'
 
 export interface PageGroup {
@@ -202,14 +172,7 @@ export interface PageGroup {
 }
 
 export const PAGE_GROUPS: PageGroup[] = [
-  { key: 'home',      label: 'Início',          Icon: Home      },
-  { key: 'historia',  label: 'Nossa História',   Icon: BookOpen  },
-  { key: 'artesanato',label: 'Artesanato',       Icon: ShoppingBag },
+  { key: 'home',       label: 'Início',        Icon: Home       },
+  { key: 'historia',   label: 'Nossa História', Icon: BookOpen   },
+  { key: 'artesanato', label: 'Artesanato',     Icon: ShoppingBag },
 ]
-
-// Keep sectionMeta-compatible exports for backward compat (SectionNav etc.)
-export type SectionMeta = Pick<SectionConfig, 'Icon' | 'group' | 'displayLabel'>
-export const SECTION_META: Record<string, SectionMeta> = Object.fromEntries(
-  SECTION_CONFIGS.map((c) => [c.sectionName, { Icon: c.Icon, group: c.group, label: c.displayLabel }])
-)
-export const DEFAULT_META: SectionMeta = { Icon: Home, group: 'home', displayLabel: 'Seção' }

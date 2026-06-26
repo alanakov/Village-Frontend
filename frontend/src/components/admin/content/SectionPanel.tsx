@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import toast from 'react-hot-toast'
 import {
   ImageIcon, Type, LayoutGrid, Info,
@@ -27,19 +27,13 @@ interface SectionPanelProps {
 
 export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProps) {
   const config = getConfig(section.name)
-  const [saving, setSaving] = useState(false)
-
-  // Header editing
+  const [saving, setSaving] = useState(false)  
   const [editingHeader, setEditingHeader] = useState(false)
   const [editTitle, setEditTitle]         = useState(section.title ?? '')
   const [editSubtitle, setEditSubtitle]   = useState(section.subtitle ?? '')
-  const [savingHeader, setSavingHeader]   = useState(false)
-
-  // Delete section
+  const [savingHeader, setSavingHeader]   = useState(false)  
   const [confirmDelete, setConfirmDelete]   = useState(false)
-  const [deletingSection, setDeletingSection] = useState(false)
-
-  // Add sub-entity
+  const [deletingSection, setDeletingSection] = useState(false)  
   const [addModal, setAddModal] = useState<SubEntityType | null>(null)
 
   if (!config) {
@@ -65,8 +59,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
     (config.cards.max === undefined || cardCount < config.cards.max)
   const canAddImage = config.images.allowed &&
     (config.images.max === undefined || imageCount < config.images.max)
-
-  // ── Handlers ─────────────────────────────────────────────────────────────
 
   const wrap = async (fn: () => Promise<void>) => {
     setSaving(true)
@@ -143,8 +135,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
 
   return (
     <div className="space-y-5">
-
-      {/* ── Section header card ───────────────────────────────────────────── */}
       <div className="rounded-2xl bg-[var(--primary)]/8 border border-[var(--primary)]/20 p-5">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/15 flex items-center justify-center shrink-0 mt-0.5">
@@ -246,8 +236,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
           )}
         </div>
       </div>
-
-      {/* ── Fixed buttons info ─────────────────────────────────────────────── */}
       {config.buttons === 'fixed' && config.fixedButtonLabels && (
         <div className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden">
           <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[var(--border)] bg-[var(--muted)]/40">
@@ -268,8 +256,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
           </div>
         </div>
       )}
-
-      {/* ── Contents ──────────────────────────────────────────────────────── */}
       {config.contents.allowed && (
         <SubEntityBlock
           icon={<Type className="w-4 h-4 text-[var(--primary)]" />}
@@ -290,8 +276,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
           ))}
         </SubEntityBlock>
       )}
-
-      {/* ── Cards ─────────────────────────────────────────────────────────── */}
       {config.cards.allowed && (
         <SubEntityBlock
           icon={<LayoutGrid className="w-4 h-4 text-[var(--primary)]" />}
@@ -315,8 +299,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
           ))}
         </SubEntityBlock>
       )}
-
-      {/* ── Images ────────────────────────────────────────────────────────── */}
       {config.images.allowed && (
         <SubEntityBlock
           icon={<ImageIcon className="w-4 h-4 text-[var(--primary)]" />}
@@ -331,8 +313,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
           ))}
         </SubEntityBlock>
       )}
-
-      {/* ── Add modal ─────────────────────────────────────────────────────── */}
       {addModal && (
         <AddSubEntityModal
           open={true}
@@ -343,8 +323,6 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
           onCreated={() => { setAddModal(null); onRefetch() }}
         />
       )}
-
-      {/* ── Delete section confirm ─────────────────────────────────────────── */}
       <ConfirmDialog
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
@@ -359,19 +337,17 @@ export function SectionPanel({ section, onRefetch, onDeleted }: SectionPanelProp
   )
 }
 
-// ── SubEntityBlock ────────────────────────────────────────────────────────────
-
 function SubEntityBlock({
   icon, label, count, limit, minRequired, canAdd, onAdd, children,
 }: {
-  icon: React.ReactNode
+  icon: ReactNode
   label: string
   count: number
   limit?: number
   minRequired?: number
   canAdd: boolean
   onAdd: () => void
-  children: React.ReactNode
+  children: ReactNode
 }) {
   return (
     <div className="rounded-2xl bg-[var(--card)] border border-[var(--border)] overflow-hidden">

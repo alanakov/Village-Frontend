@@ -43,8 +43,6 @@ export function useSections() {
     fetchAll()
   }, [fetchAll])
 
-  // ── Section CRUD ──────────────────────────────────────────────────────────
-
   const createSimple = async (dto: CreateSectionDto): Promise<Section> => {
     const created = await sectionService.create(dto)
     await fetchAll()
@@ -61,25 +59,13 @@ export function useSections() {
 
   const updateSection = async (id: number, dto: UpdateSectionDto): Promise<Section> => {
     const updated = await sectionService.update(id, dto)
-    // Refresh full data to reflect any changes
     await fetchAll()
     return updated
   }
 
   const deleteSection = (id: number): void => {
-    // Optimistic local update — caller handles API call
     setSections((prev) => prev.filter((s) => s.idSection !== id))
   }
 
-  return {
-    sections,
-    loading,
-    error,
-    refetch: fetchAll,
-    // Section operations
-    createSimple,
-    createFull,
-    updateSection,
-    deleteSection,
-  }
+  return { sections, loading, error, refetch: fetchAll, createSimple, createFull, updateSection, deleteSection }
 }

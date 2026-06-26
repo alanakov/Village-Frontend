@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Plus, Pencil, Trash2, FolderOpen, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
@@ -15,16 +15,46 @@ import { Badge } from '@/components/ui/Badge'
 import { Pagination } from '@/components/ui/Pagination'
 import { getApiErrorMessage } from '@/utils/helpers'
 import type { Category } from '@/types'
+import type { SortOrder } from '@/hooks/usePagination'
 import toast from 'react-hot-toast'
 
 type SortableCatKey = 'name' | 'createdAt'
 
+interface SortBtnProps {
+  label: string
+  sortKey: SortableCatKey
+  activeSortKey: SortableCatKey | null
+  sortOrder: SortOrder
+  onSort: (key: SortableCatKey) => void
+}
+
+function SortBtn({ label, sortKey, activeSortKey, sortOrder, onSort }: SortBtnProps) {
+  const isActive = activeSortKey === sortKey
+  return (
+    <button
+      type="button"
+      onClick={() => onSort(sortKey)}
+      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
+      title={`Ordenar por ${label}`}
+    >
+      {label}
+      {isActive ? (
+        sortOrder === 'asc'
+          ? <ArrowUp className="w-3 h-3 text-[var(--primary)]" />
+          : <ArrowDown className="w-3 h-3 text-[var(--primary)]" />
+      ) : (
+        <ArrowUpDown className="w-3 h-3 opacity-40" />
+      )}
+    </button>
+  )
+}
+
 export function AdminCategoryManagement() {
   const { categories, loading, create, update, remove } = useCategories()
   const { products } = useProducts()
-  const [modalOpen, setModalOpen]               = useState(false)
-  const [editing, setEditing]                   = useState<Category | null>(null)
-  const [deleteConfirmId, setDeleteConfirmId]   = useState<number | null>(null)
+  const [modalOpen, setModalOpen]             = useState(false)
+  const [editing, setEditing]                 = useState<Category | null>(null)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
 
   const {
     register,
@@ -36,16 +66,12 @@ export function AdminCategoryManagement() {
   const productCountFor = (catId: number) =>
     products.filter((p) => p.categoryId === catId).length
 
-  // ── Paginação e ordenação ──────────────────────────────────────────────────
-
   const pagination = usePagination<Category>({
     items: categories,
     pageSize: 6,
     defaultSortKey: 'name',
     defaultSortOrder: 'asc',
   })
-
-  // ── Modal handlers ────────────────────────────────────────────────────────
 
   const openCreate = () => {
     setEditing(null)
@@ -92,31 +118,8 @@ export function AdminCategoryManagement() {
     }
   }
 
-  // Botão de ordenação reutilizável
-  function SortBtn({ label, sortKey }: { label: string; sortKey: SortableCatKey }) {
-    const isActive = pagination.sortKey === sortKey
-    return (
-      <button
-        type="button"
-        onClick={() => pagination.setSort(sortKey as keyof Category)}
-        className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
-        title={`Ordenar por ${label}`}
-      >
-        {label}
-        {isActive ? (
-          pagination.sortOrder === 'asc'
-            ? <ArrowUp className="w-3 h-3 text-[var(--primary)]" />
-            : <ArrowDown className="w-3 h-3 text-[var(--primary)]" />
-        ) : (
-          <ArrowUpDown className="w-3 h-3 opacity-40" />
-        )}
-      </button>
-    )
-  }
-
   return (
     <div>
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="font-display text-3xl font-bold text-[var(--primary)]">Categorias</h1>
@@ -129,16 +132,26 @@ export function AdminCategoryManagement() {
         </Button>
       </div>
 
-      {/* Ordenação */}
       {!loading && categories.length > 1 && (
         <div className="flex items-center gap-3 mb-5 text-xs font-ui text-[var(--muted-foreground)]">
           <span className="font-semibold">Ordenar por:</span>
-          <SortBtn label="Nome" sortKey="name" />
-          <SortBtn label="Data de criação" sortKey="createdAt" />
+          <SortBtn
+            label="Nome"
+            sortKey="name"
+            activeSortKey={pagination.sortKey as SortableCatKey | null}
+            sortOrder={pagination.sortOrder}
+            onSort={(k) => pagination.setSort(k as keyof Category)}
+          />
+          <SortBtn
+            label="Data de criação"
+            sortKey="createdAt"
+            activeSortKey={pagination.sortKey as SortableCatKey | null}
+            sortOrder={pagination.sortOrder}
+            onSort={(k) => pagination.setSort(k as keyof Category)}
+          />
         </div>
       )}
 
-      {/* Grid */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -208,7 +221,6 @@ export function AdminCategoryManagement() {
             })}
           </div>
 
-          {/* Paginação */}
           <div className="mt-4">
             <Pagination
               currentPage={pagination.currentPage}
@@ -231,7 +243,6 @@ export function AdminCategoryManagement() {
         </>
       )}
 
-      {/* Form Modal */}
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -257,7 +268,6 @@ export function AdminCategoryManagement() {
         </form>
       </Modal>
 
-      {/* Delete Confirm */}
       <Modal
         open={deleteConfirmId !== null}
         onClose={() => setDeleteConfirmId(null)}

@@ -41,15 +41,11 @@ export function AdminProductManagement() {
     defaultValues: { name: '', description: '', price: 0, size: '', categoryId: 0 },
   })
 
-  // ── Sincroniza a imagem existente ao abrir edição ──────────────────────────
-
   useEffect(() => {
     if (modalOpen && editing?.imageUrl) {
       imageUpload.initWithUrl(editing.imageUrl)
     }
   }, [modalOpen, editing, imageUpload.initWithUrl])
-
-  // ── Filtro de busca ────────────────────────────────────────────────────────
 
   const filtered = products.filter(
     (p) =>
@@ -59,20 +55,13 @@ export function AdminProductManagement() {
       (p.category?.name ?? '').toLowerCase().includes(search.toLowerCase())
   )
 
-  // ── Paginação e ordenação ──────────────────────────────────────────────────
-
   const pagination = usePagination<Product>({
     items: filtered,
     pageSize: 10,
     defaultSortKey: 'name',
     defaultSortOrder: 'asc',
-  })
-
-  // Reset para página 1 quando o filtro de busca muda
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  })  
   useEffect(() => { pagination.setPage(1) }, [search])
-
-  // ── Controle do modal ──────────────────────────────────────────────────────
 
   const openCreate = () => {
     setEditing(null)
@@ -98,8 +87,6 @@ export function AdminProductManagement() {
     setModalOpen(false)
     imageUpload.reset()
   }
-
-  // ── Submit ─────────────────────────────────────────────────────────────────
 
   const onSubmit: SubmitHandler<ProductUploadFormData> = async (data) => {
     if (!imageUpload.hasImage) {
@@ -138,8 +125,6 @@ export function AdminProductManagement() {
     }
   }
 
-  // ── Exclusão ───────────────────────────────────────────────────────────────
-
   const handleDelete = async (id: number) => {
     try {
       await remove(id)
@@ -150,11 +135,8 @@ export function AdminProductManagement() {
     }
   }
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   return (
     <div>
-      {/* Cabeçalho */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="font-display text-3xl font-bold text-[var(--primary)]">
@@ -169,8 +151,6 @@ export function AdminProductManagement() {
           <Plus className="w-4 h-4" /> Novo Produto
         </Button>
       </div>
-
-      {/* Busca */}
       <div className="relative mb-6 max-w-sm">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)]" />
         <input
@@ -181,8 +161,6 @@ export function AdminProductManagement() {
           className="w-full pl-10 pr-4 py-2.5 border border-[var(--border)] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[var(--primary)] font-ui text-sm"
         />
       </div>
-
-      {/* Tabela */}
       <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-6 space-y-3">
@@ -303,8 +281,6 @@ export function AdminProductManagement() {
                 </tbody>
               </table>
             </div>
-
-            {/* Paginação */}
             <div className="px-5 border-t border-[var(--border)]">
               <Pagination
                 currentPage={pagination.currentPage}
@@ -327,15 +303,12 @@ export function AdminProductManagement() {
           </>
         )}
       </div>
-
-      {/* Modal de criação / edição */}
       <Modal
         open={modalOpen}
         onClose={closeModal}
         title={editing ? 'Editar Produto' : 'Novo Produto'}
         className="max-w-2xl"
       >
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-5" noValidate>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
@@ -435,8 +408,6 @@ export function AdminProductManagement() {
           </div>
         </form>
       </Modal>
-
-      {/* Modal de confirmação de exclusão */}
       <Modal
         open={deleteConfirmId !== null}
         onClose={() => setDeleteConfirmId(null)}

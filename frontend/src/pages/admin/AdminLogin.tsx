@@ -29,7 +29,6 @@ export function AdminLogin() {
   const onSubmit = async (data: LoginFormData) => {
     setServerError('')
     try {
-      // Backend retorna { message, token, user } — NÃO { access_token }
       const res = await authService.login(data)
       setAuth(res.token, res.user)
       navigate('/admin/dashboard')
@@ -41,7 +40,6 @@ export function AdminLogin() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[var(--primary)]/5 to-[var(--background)] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
             <Leaf className="w-8 h-8 text-white" />
@@ -51,11 +49,8 @@ export function AdminLogin() {
           </h1>
           <p className="text-[var(--muted-foreground)] font-ui text-sm">Aldeia Cultura Viva</p>
         </div>
-
-        {/* Card */}
         <div className="bg-[var(--card)] p-8 rounded-2xl shadow-xl border border-[var(--border)]">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-            {/* Email */}
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
@@ -85,8 +80,6 @@ export function AdminLogin() {
                 </p>
               )}
             </div>
-
-            {/* Password */}
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
                 <label
@@ -95,7 +88,6 @@ export function AdminLogin() {
                 >
                   Senha <span className="text-[var(--destructive)]">*</span>
                 </label>
-                {/* Link "Esqueceu a senha?" — inicia o fluxo de recuperação */}
                 <Link
                   to="/admin/recuperar-senha"
                   className="text-xs text-[var(--primary)] font-ui font-semibold hover:underline"
@@ -135,8 +127,6 @@ export function AdminLogin() {
                 </p>
               )}
             </div>
-
-            {/* Server error */}
             {serverError && (
               <div
                 className="bg-[var(--destructive)]/10 text-[var(--destructive)] px-4 py-3 rounded-xl text-sm font-ui border border-[var(--destructive)]/20"
@@ -156,8 +146,6 @@ export function AdminLogin() {
               <LogIn className="w-5 h-5" />
               {isSubmitting ? 'Entrando...' : 'Entrar'}
             </Button>
-
-            {/* Link para cadastro */}
             <p className="text-center text-sm text-[var(--muted-foreground)] font-ui">
               Não tem uma conta?{' '}
               <Link

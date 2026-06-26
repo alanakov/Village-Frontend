@@ -1,5 +1,3 @@
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-
 export type UserType = 'ADMIN'
 
 export interface AuthUserResponse {
@@ -31,8 +29,6 @@ export interface AuthState {
   isAuthenticated: boolean
 }
 
-// ─── Admin ────────────────────────────────────────────────────────────────────
-
 export interface AdminUser {
   idAdmin: number
   name: string
@@ -58,8 +54,6 @@ export interface UpdateAdminDto {
   newPassword?: string
 }
 
-// ─── Category ─────────────────────────────────────────────────────────────────
-
 export interface Category {
   idCategory: number
   name: string
@@ -69,8 +63,6 @@ export interface Category {
 
 export interface CreateCategoryDto { name: string }
 export interface UpdateCategoryDto { name?: string }
-
-// ─── Product ──────────────────────────────────────────────────────────────────
 
 export interface Product {
   idProduct: number
@@ -103,25 +95,15 @@ export interface UpdateProductDto {
   categoryId?: number
 }
 
-// ─── Section ──────────────────────────────────────────────────────────────────
-
-/**
- * Section name enum — must mirror exactly the SectionName enum in the backend.
- * Keys are English identifiers (internal use only).
- * Values are the strings persisted in the DB and exchanged with the API — do not change them.
- */
 export enum SectionName {
-  // Home
-  home             = 'Principal',
-  aboutUs          = 'Quem Somos',
-  featuredCraft    = 'Artesanato em Destaque',
-  socialImpact     = 'Impacto Social',
-  // Nossa História
-  identity         = 'Identidade',
-  cultureDimensions= 'Dimensões da Nossa Cultura',
-  communityMoments = 'Momentos da Nossa Comunidade',
-  // Artesanato
-  crafts           = 'Artesanato',
+  home              = 'Principal',
+  aboutUs           = 'Quem Somos',
+  featuredCraft     = 'Artesanato em Destaque',
+  socialImpact      = 'Impacto Social',
+  identity          = 'Identidade',
+  cultureDimensions = 'Dimensões da Nossa Cultura',
+  communityMoments  = 'Momentos da Nossa Comunidade',
+  crafts            = 'Artesanato',
 }
 
 export interface Section {
@@ -149,8 +131,6 @@ export interface UpdateSectionDto {
   subtitle?: string
 }
 
-// ─── Content ──────────────────────────────────────────────────────────────────
-
 export type ContentType = 'P1' | 'P2' | 'P3' | 'P4' | 'P5'
 
 export interface SectionContent {
@@ -165,8 +145,6 @@ export interface SectionContent {
 export interface ContentDto { type: ContentType; content: string }
 export interface CreateContentDto { type: ContentType; content: string; sectionId: number }
 
-// ─── Stats ────────────────────────────────────────────────────────────────────
-
 export interface SectionStat {
   idStat: number
   title: string
@@ -178,8 +156,6 @@ export interface SectionStat {
 
 export interface StatsDto { title: string; value: string }
 export interface CreateStatDto { title: string; value: string; sectionId: number }
-
-// ─── Button ───────────────────────────────────────────────────────────────────
 
 export interface SectionButton {
   idButton: number
@@ -193,12 +169,9 @@ export interface SectionButton {
 export interface ButtonDto { label: string; link: string }
 export interface CreateButtonDto { label: string; link: string; sectionId: number }
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
-
 export interface SectionCard {
   idCard: number
   title: string
-  /** Subtitle / short description of the card */
   description: string
   icon: string
   sectionId: number
@@ -208,8 +181,6 @@ export interface SectionCard {
 
 export interface CardDto { title: string; description: string; icon: string }
 export interface CreateCardDto { title: string; description: string; icon: string; sectionId: number }
-
-// ─── Image ────────────────────────────────────────────────────────────────────
 
 export interface SectionImage {
   idImage: number
@@ -223,8 +194,6 @@ export interface SectionImage {
 export interface CreateImageDto { altText: string; sectionId: number }
 export interface UpdateImageDto { altText?: string }
 
-// ─── Full Section ─────────────────────────────────────────────────────────────
-
 export interface CreateFullSectionDto {
   section?: CreateSectionDto
   contents?: ContentDto[]
@@ -232,8 +201,6 @@ export interface CreateFullSectionDto {
   stats?: StatsDto[]
   buttons?: ButtonDto[]
 }
-
-// ─── UI ───────────────────────────────────────────────────────────────────────
 
 export type LoadingState = 'idle' | 'loading' | 'success' | 'error'
 

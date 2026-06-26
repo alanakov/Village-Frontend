@@ -1,7 +1,3 @@
-/**
- * Formats a phone number as (XX) XXXXX-XXXX (mobile) or (XX) XXXX-XXXX (landline).
- * Strips non-digits and limits to 11 digits.
- */
 export function maskPhone(value: string): string {
   const digits = value.replace(/\D/g, '').slice(0, 11)
 
@@ -13,9 +9,6 @@ export function maskPhone(value: string): string {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
 }
 
-/**
- * Normalizes an email: forces lowercase and removes spaces.
- */
 export function maskEmail(value: string): string {
   return value.toLowerCase().replace(/\s/g, '')
 }

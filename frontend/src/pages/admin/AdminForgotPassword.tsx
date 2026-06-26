@@ -20,10 +20,6 @@ export function AdminForgotPassword() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormData>({ resolver: zodResolver(forgotPasswordSchema) })
-
-  // Não redireciona usuários autenticados: o fluxo de alteração de senha
-  // a partir de "Meu Perfil" passa por aqui com sessão ativa.
-
   const emailReg = register('email')
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
@@ -42,8 +38,6 @@ export function AdminForgotPassword() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[var(--primary)]/5 to-[var(--background)] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
             <Leaf className="w-8 h-8 text-white" />
@@ -53,12 +47,10 @@ export function AdminForgotPassword() {
           </h1>
           <p className="text-[var(--muted-foreground)] font-ui text-sm">Aldeia Cultura Viva</p>
         </div>
-
-        {/* Card */}
         <div className="bg-[var(--card)] p-8 rounded-2xl shadow-xl border border-[var(--border)]">
 
           {emailSent ? (
-            /* ── Estado: e-mail enviado ── */
+            
             <div className="text-center py-2">
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-emerald-600" />
@@ -102,7 +94,7 @@ export function AdminForgotPassword() {
               </button>
             </div>
           ) : (
-            /* ── Estado: formulário ── */
+            
             <>
               <p className="text-[var(--muted-foreground)] font-ui text-sm mb-6 leading-relaxed">
                 Informe o e-mail cadastrado e enviaremos um código de 6 dígitos para você
@@ -110,7 +102,6 @@ export function AdminForgotPassword() {
               </p>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-                {/* Campo e-mail */}
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="email"
@@ -143,8 +134,6 @@ export function AdminForgotPassword() {
                     </p>
                   )}
                 </div>
-
-                {/* Erro do servidor */}
                 {serverError && (
                   <div
                     className="bg-[var(--destructive)]/10 text-[var(--destructive)] px-4 py-3 rounded-xl text-sm font-ui border border-[var(--destructive)]/20"
@@ -167,8 +156,6 @@ export function AdminForgotPassword() {
               </form>
             </>
           )}
-
-          {/* Link de voltar */}
           {!emailSent && (
             <div className="mt-6 pt-5 border-t border-[var(--border)]">
               <Link

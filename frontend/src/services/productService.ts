@@ -12,11 +12,6 @@ export const productService = {
     return data
   },
 
-  async search(name: string): Promise<Product[]> {
-    const { data } = await api.get<Product[]>(`/product/search/${name}`)
-    return data
-  },
-
   async create(dto: CreateProductDto): Promise<Product> {
     const { data } = await api.post<Product>('/product', dto)
     return data

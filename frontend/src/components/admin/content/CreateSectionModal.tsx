@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -41,11 +41,7 @@ export function CreateSectionModal({ open, onClose, existingSections, onCreate }
       const conf = getConfig(name)!
       const dto: CreateFullSectionDto = {
         section: {
-          name,
-          // Always send a title — use fixedTitle for non-editable sections
-          title:    conf.titleEditable ? title.trim() : (conf.fixedTitle ?? ''),
-          // Always send a subtitle — use fixedSubtitle for non-editable sections
-          subtitle: conf.subtitleEditable ? subtitle.trim() : (conf.fixedSubtitle ?? ''),
+          name,          title:    conf.titleEditable ? title.trim() : (conf.fixedTitle ?? ''),          subtitle: conf.subtitleEditable ? subtitle.trim() : (conf.fixedSubtitle ?? ''),
         },
       }
       await onCreate(dto)
@@ -65,8 +61,6 @@ export function CreateSectionModal({ open, onClose, existingSections, onCreate }
       className="max-w-lg"
     >
       <div className="space-y-5">
-
-        {/* Section selector */}
         <div className="space-y-1.5">
           <label className="text-sm font-semibold text-[var(--foreground)] font-ui">
             Seção <span className="text-[var(--destructive)]">*</span>
@@ -96,8 +90,6 @@ export function CreateSectionModal({ open, onClose, existingSections, onCreate }
             </>
           )}
         </div>
-
-        {/* Preview of what will be created */}
         {selectedConf && (
           <div className="rounded-xl bg-[var(--muted)] border border-[var(--border)] p-4 space-y-3">
             <div className="flex items-start gap-2">
@@ -121,8 +113,6 @@ export function CreateSectionModal({ open, onClose, existingSections, onCreate }
             </div>
           </div>
         )}
-
-        {/* Title field */}
         {selectedConf?.titleEditable && (
           <Input
             label="Título"
@@ -142,8 +132,6 @@ export function CreateSectionModal({ open, onClose, existingSections, onCreate }
             </p>
           </div>
         )}
-
-        {/* Subtitle field */}
         {selectedConf?.subtitleEditable && (
           <Textarea
             label="Subtítulo"

@@ -26,14 +26,11 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
       role="dialog"
       aria-modal="true"
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
-
-      {/* Panel */}
       <div
         className={cn(
           'relative z-10 bg-[var(--card)] rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto',

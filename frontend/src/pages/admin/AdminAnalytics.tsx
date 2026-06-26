@@ -42,8 +42,6 @@ export function AdminAnalytics() {
           Visão analítica do catálogo
         </p>
       </div>
-
-      {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
@@ -80,7 +78,6 @@ export function AdminAnalytics() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* By Category */}
         <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm p-6">
           <h2 className="font-display text-xl font-semibold text-[var(--card-foreground)] mb-6">
             Produtos por Categoria
@@ -118,8 +115,6 @@ export function AdminAnalytics() {
             </div>
           )}
         </div>
-
-        {/* Price Analysis */}
         <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm p-6">
           <h2 className="font-display text-xl font-semibold text-[var(--card-foreground)] mb-6">
             Análise de Preços

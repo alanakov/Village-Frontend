@@ -29,17 +29,11 @@ export function AddSubEntityModal({
   open, onClose, sectionId, type, config, onCreated,
 }: AddSubEntityModalProps) {
   const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
-
-  // Content
-  const [contentText, setContentText] = useState('')
-
-  // Card
+  const [error, setError]     = useState('')  
+  const [contentText, setContentText] = useState('')  
   const [cardTitle,  setCardTitle]  = useState('')
   const [cardDesc,   setCardDesc]   = useState('')
-  const [cardIcon,   setCardIcon]   = useState('')
-
-  // Image
+  const [cardIcon,   setCardIcon]   = useState('')  
   const [imgAltText, setImgAltText] = useState('')
   const [imgFile,    setImgFile]    = useState<File | null>(null)
   const [imgPreview, setImgPreview] = useState('')

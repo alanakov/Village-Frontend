@@ -1,21 +1,21 @@
-import React from 'react';
-import { cn } from '@/utils/helpers';
+import { forwardRef, type SelectHTMLAttributes } from 'react'
+import { cn } from '@/utils/helpers'
 
 interface SelectOption {
-  value: string | number;
-  label: string;
+  value: string | number
+  label: string
 }
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label?: string;
-  error?: string;
-  options: SelectOption[];
-  placeholder?: string;
+interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  label?: string
+  error?: string
+  options: SelectOption[]
+  placeholder?: string
 }
 
-export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, options, placeholder, className, id, ...props }, ref) => {
-    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
+    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
     return (
       <div className="flex flex-col gap-1.5 font-ui">
         {label && (
@@ -45,7 +45,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         </select>
         {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
       </div>
-    );
+    )
   }
-);
-Select.displayName = 'Select';
+)
+Select.displayName = 'Select'

@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react'
 import { publicApi } from '@/lib/publicApi'
-import type { Product, Category } from '@/types'
-import { useAuthStore } from '@/store/authStore'
 import { productService } from '@/services/productService'
 import { categoryService } from '@/services/categoryService'
-
-function resolveCategories(prods: Product[], cats: Category[]): Product[] {
-  const catMap = new Map(cats.map((c) => [c.idCategory, c]))
-  return prods.map((p) => ({ ...p, category: p.category ?? catMap.get(p.categoryId) }))
-}
+import { resolveProductCategories } from '@/utils/helpers'
+import { useAuthStore } from '@/store/authStore'
+import type { Product, Category } from '@/types'
 
 export function usePublicProducts() {
   const [products, setProducts] = useState<Product[]>([])
@@ -30,7 +26,7 @@ export function usePublicProducts() {
         ])
 
     fetch
-      .then(([prods, cats]) => setProducts(resolveCategories(prods, cats)))
+      .then(([prods, cats]) => setProducts(resolveProductCategories(prods, cats)))
       .catch(() => {
         setProducts([])
         setError('Não foi possível carregar os produtos.')

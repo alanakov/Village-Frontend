@@ -30,7 +30,6 @@ export function CardField({ item, subtitleLabel = 'Subtítulo', onSave, onDelete
 
   return (
     <div className="p-3 bg-[var(--muted)] rounded-xl border border-[var(--border)] space-y-3">
-      {/* Título */}
       <div className="space-y-1">
         <label className="text-xs font-semibold text-[var(--muted-foreground)] font-ui">Título</label>
         <input
@@ -40,11 +39,7 @@ export function CardField({ item, subtitleLabel = 'Subtítulo', onSave, onDelete
           className="w-full px-3 py-1.5 rounded-lg border border-[var(--border)] bg-white text-sm font-ui focus:outline-none focus:ring-1 focus:ring-[var(--primary)] disabled:opacity-50"
         />
       </div>
-
-      {/* Ícone via seletor visual */}
       <IconPicker value={icon} onChange={setIcon} disabled={disabled} />
-
-      {/* Subtítulo + ações */}
       <div className="space-y-1">
         <label className="text-xs font-semibold text-[var(--muted-foreground)] font-ui">{subtitleLabel}</label>
         <div className="flex gap-2">

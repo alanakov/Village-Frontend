@@ -1,8 +1,8 @@
-import React from 'react';
-import { cn } from '@/utils/helpers';
+import { type HTMLAttributes } from 'react'
+import { cn } from '@/utils/helpers'
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  hoverable?: boolean;
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  hoverable?: boolean
 }
 
 export function Card({ className, hoverable, ...props }: CardProps) {
@@ -15,19 +15,19 @@ export function Card({ className, hoverable, ...props }: CardProps) {
       )}
       {...props}
     />
-  );
+  )
 }
 
-export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('p-6 pb-0', className)} {...props} />;
+export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('p-6 pb-0', className)} {...props} />
 }
 
-export function CardBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('p-6', className)} {...props} />;
+export function CardBody({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('p-6', className)} {...props} />
 }
 
-export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function CardFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={cn('p-6 pt-0 border-t border-[var(--border)]', className)} {...props} />
-  );
+  )
 }

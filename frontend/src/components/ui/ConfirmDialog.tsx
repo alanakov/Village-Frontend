@@ -49,18 +49,15 @@ export function ConfirmDialog({
           >
             Cancelar
           </Button>
-          <button
+          <Button
             type="button"
+            variant={danger ? 'danger' : 'primary'}
+            className="flex-1"
             onClick={onConfirm}
-            disabled={loading}
-            className={`flex-1 py-2.5 px-4 rounded-xl font-semibold text-sm font-ui transition-colors disabled:opacity-50 ${
-              danger
-                ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white'
-            }`}
+            loading={loading}
           >
-            {loading ? 'Aguarde...' : confirmLabel}
-          </button>
+            {confirmLabel}
+          </Button>
         </div>
       </div>
     </Modal>
