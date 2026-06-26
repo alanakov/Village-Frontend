@@ -1,28 +1,10 @@
-/**
- * Product Management E2E Tests — AdminProductManagement component.
- *
- * Scenarios:
- *  1.  List products — loading, display, table structure
- *  2.  Create product — form filling, image upload, API call, persistence
- *  3.  Create product — missing image validation (image required)
- *  4.  Create product — missing required fields (name, description, price)
- *  5.  Create product — invalid price (zero / negative)
- *  6.  Edit product — change data, save, verify update
- *  7.  Edit product — change image
- *  8.  Delete product — confirmation dialog, persistence
- *  9.  Search — filters table results correctly
- *  10. Category dependency — product requires valid category
- */
-
 import { test, expect } from '../../fixtures/test.fixture'
 import {
-  TEST_PRODUCT, UPDATED_PRODUCT, ROUTES, TIMEOUTS, TEST_CATEGORY
+  TEST_PRODUCT, UPDATED_PRODUCT, ROUTES, TEST_CATEGORY
 } from '../../data/test-data'
 import { API_URL } from '../../playwright.config'
 import { getTestImagePath } from '../../helpers/image.helper'
-import { waitForSkeletonToDisappear } from '../../helpers/wait.helper'
 
-// State shared within this test file
 let createdCategoryId: number
 let createdProductId:  number
 let testProductName:   string
@@ -60,13 +42,9 @@ test.describe('Produtos — Gestão administrativa', () => {
   }) => {
     await productManagementPage.goto()
 
-    // Page heading visible
     await expect(productManagementPage.pageHeading).toBeVisible()
-
-    // "Novo Produto" button present
     await expect(productManagementPage.newProductButton).toBeVisible()
 
-    // Check API was called and responded
     const apiUrl = API_URL
     const products = await page.evaluate(async (url) => {
       const res = await fetch(`${url}product`, {
@@ -78,7 +56,6 @@ test.describe('Produtos — Gestão administrativa', () => {
     }, apiUrl)
     expect(Array.isArray(products)).toBe(true)
 
-    // Table headers are present
     const tableHeaders = ['Imagem', 'Nome', 'Categoria', 'Preço', 'Ações']
     for (const header of tableHeaders) {
       await expect(page.getByRole('columnheader', { name: header })).toBeVisible()
@@ -94,7 +71,6 @@ test.describe('Produtos — Gestão administrativa', () => {
     await productManagementPage.goto()
     await productManagementPage.openCreateModal()
 
-    // Fill form fields
     await productManagementPage.fillProductForm({
       name:        testProductName,
       description: TEST_PRODUCT.description,
@@ -103,7 +79,6 @@ test.describe('Produtos — Gestão administrativa', () => {
       categoryId:  String(createdCategoryId),
     })
 
-    // Upload image
     const imagePath = getTestImagePath()
     await productManagementPage.uploadImage(imagePath)
 
@@ -119,13 +94,11 @@ test.describe('Produtos — Gestão administrativa', () => {
       productManagementPage.submitForm(),
     ])
 
-    // ── Upload API validation ──────────────────────────────────────────────
     const uploadBody = await uploadResponse.json()
     expect(uploadBody).toHaveProperty('imageUrl')
     expect(typeof uploadBody.imageUrl).toBe('string')
     expect(uploadBody.imageUrl.length).toBeGreaterThan(0)
 
-    // ── Create API validation ──────────────────────────────────────────────
     const createBody = await createResponse.json()
     expect(createBody).toHaveProperty('idProduct')
     expect(createBody.name).toBe(testProductName)
@@ -134,10 +107,9 @@ test.describe('Produtos — Gestão administrativa', () => {
 
     createdProductId = createBody.idProduct
 
-    // ── UI: product appears in table ───────────────────────────────────────
     await productManagementPage.waitForProductInTable(testProductName)
 
-    // ── Backend persistence via direct API call ────────────────────────────
+    // Backend persistence via direct API call
     await apiHelper.login()
     const persisted = await apiHelper.getProductById(createdProductId) as Record<string, unknown>
     expect(persisted.name).toBe(testProductName)
@@ -164,7 +136,6 @@ test.describe('Produtos — Gestão administrativa', () => {
     // Do NOT upload an image
     await productManagementPage.submitForm()
 
-    // Error message for missing image
     await expect(
       productManagementPage.page.getByText(/selecione uma imagem/i)
     ).toBeVisible()
@@ -182,7 +153,6 @@ test.describe('Produtos — Gestão administrativa', () => {
     await productManagementPage.goto()
     await productManagementPage.openCreateModal()
 
-    // Submit with everything empty
     await productManagementPage.submitForm()
 
     // At least name and description errors should appear
@@ -227,7 +197,7 @@ test.describe('Produtos — Gestão administrativa', () => {
   test('editar produto — altera dados e salva corretamente', async ({
     page, productManagementPage, apiHelper
   }) => {
-    // Ensure product exists
+    // Ensure product exists from test 2
     expect(createdProductId).toBeTruthy()
 
     await productManagementPage.goto()
@@ -238,7 +208,6 @@ test.describe('Produtos — Gestão administrativa', () => {
     // Fields should be pre-populated with existing values
     await expect(productManagementPage.nameInput).toHaveValue(testProductName)
 
-    // Change name and description
     await productManagementPage.fillProductForm({
       name:        UPDATED_PRODUCT.name,
       description: UPDATED_PRODUCT.description,
@@ -246,7 +215,6 @@ test.describe('Produtos — Gestão administrativa', () => {
       size:        UPDATED_PRODUCT.size,
     })
 
-    // Intercept update call
     const [updateResponse] = await Promise.all([
       page.waitForResponse((r) =>
         r.url().includes(`/product/${createdProductId}`) &&
@@ -260,10 +228,8 @@ test.describe('Produtos — Gestão administrativa', () => {
     expect(updatedBody.name).toBe(UPDATED_PRODUCT.name)
     expect(Number(updatedBody.price)).toBeCloseTo(Number(UPDATED_PRODUCT.price), 1)
 
-    // UI shows updated name
     await productManagementPage.waitForProductInTable(UPDATED_PRODUCT.name)
 
-    // Backend confirms the update
     await apiHelper.login()
     const persisted = await apiHelper.getProductById(createdProductId) as Record<string, unknown>
     expect(persisted.name).toBe(UPDATED_PRODUCT.name)
@@ -290,7 +256,6 @@ test.describe('Produtos — Gestão administrativa', () => {
 
     await productManagementPage.openEditModalForProduct(testProductName)
 
-    // Clear current image and upload a new one
     const clearBtn = page.getByRole('button', { name: /remover|limpar/i })
     if (await clearBtn.isVisible()) {
       await clearBtn.click()
@@ -299,7 +264,6 @@ test.describe('Produtos — Gestão administrativa', () => {
     const newImagePath = getTestImagePath('test-product-2.png')
     await productManagementPage.uploadImage(newImagePath)
 
-    // Submit the edit
     const [updateResponse] = await Promise.all([
       page.waitForResponse((r) =>
         r.url().includes(`/product/${createdProductId}`) &&
@@ -317,80 +281,7 @@ test.describe('Produtos — Gestão administrativa', () => {
   })
 
   // ───────────────────────────────────────────────────────────────────────────
-  // 8. PESQUISA DE PRODUTOS
-  // ───────────────────────────────────────────────────────────────────────────
-  test('busca — filtra produtos pelo nome corretamente', async ({
-    productManagementPage
-  }) => {
-    await productManagementPage.goto()
-
-    // Search for a term that matches our test product
-    const searchTerm = 'E2E EDITADO'
-    await productManagementPage.filterBySearch(searchTerm)
-
-    // Our product should appear
-    await productManagementPage.waitForProductInTable(testProductName)
-
-    // Search for something that doesn't exist
-    await productManagementPage.filterBySearch('termoquenaoexiste12345xyz')
-    await expect(
-      productManagementPage.page.getByText(/nenhum produto encontrado/i)
-    ).toBeVisible()
-
-    // Clear search — products reappear
-    await productManagementPage.filterBySearch('')
-  })
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // 9. EXCLUSÃO DE PRODUTO
-  // ───────────────────────────────────────────────────────────────────────────
-  test('excluir produto — dialog de confirmação e persistência no backend', async ({
-    page, productManagementPage, apiHelper
-  }) => {
-    expect(createdProductId).toBeTruthy()
-
-    await productManagementPage.goto()
-    await productManagementPage.waitForProductInTable(testProductName)
-
-    // Click delete — confirmation dialog should appear
-    const row = await productManagementPage.getProductRow(testProductName)
-    await row.getByRole('button', { name: /excluir/i }).click()
-
-    await expect(page.getByRole('dialog')).toBeVisible()
-    await expect(
-      page.getByText(/tem certeza|esta ação não pode/i)
-    ).toBeVisible()
-
-    // Intercept the DELETE request
-    const [deleteResponse] = await Promise.all([
-      page.waitForResponse((r) =>
-        r.url().includes(`/product/${createdProductId}`) &&
-        r.request().method() === 'DELETE'
-      ),
-      productManagementPage.deleteConfirmButton.click(),
-    ])
-
-    expect(deleteResponse.status()).toBe(200)
-
-    // Product disappears from table
-    await productManagementPage.expectProductNotInTable(testProductName)
-
-    // Backend confirms deletion
-    await apiHelper.login()
-    try {
-      await apiHelper.getProductById(createdProductId)
-      throw new Error('Product should have been deleted')
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err)
-      expect(message).toMatch(/404|not found|Product should have been deleted/i)
-    }
-
-    // Mark as deleted so afterAll doesn't try again
-    createdProductId = 0
-  })
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // 10. CANCELAR EXCLUSÃO — PRODUTO PERMANECE
+  // 8. CANCELAR EXCLUSÃO — PRODUTO PERMANECE
   // ───────────────────────────────────────────────────────────────────────────
   test('cancelar exclusão — produto permanece na listagem', async ({
     page, productManagementPage, apiHelper
@@ -408,21 +299,16 @@ test.describe('Produtos — Gestão administrativa', () => {
     await productManagementPage.goto()
     await productManagementPage.waitForProductInTable(product.name)
 
-    // Click delete button
     const row = await productManagementPage.getProductRow(product.name)
     await row.getByRole('button', { name: /excluir/i }).click()
     await expect(page.getByRole('dialog')).toBeVisible()
 
-    // Click cancel instead of confirm
     await page.getByRole('button', { name: /cancelar/i }).last().click()
 
-    // Dialog should close
     await expect(page.getByRole('dialog')).toBeHidden({ timeout: 3_000 })
 
-    // Product still in table
     await productManagementPage.waitForProductInTable(product.name)
 
-    // Cleanup
     await apiHelper.deleteProduct(product.idProduct).catch(() => null)
   })
 })

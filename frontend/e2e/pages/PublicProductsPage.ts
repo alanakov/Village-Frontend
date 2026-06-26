@@ -2,16 +2,6 @@ import { Page, Locator, expect } from '@playwright/test'
 import { ROUTES, TIMEOUTS } from '../data/test-data'
 import { waitForSkeletonToDisappear } from '../helpers/wait.helper'
 
-/**
- * PublicProductsPage — POM for /produtos (public Products component).
- *
- * Covers:
- *  - Loading state / skeleton
- *  - Product grid display
- *  - Search filtering
- *  - Category pill filtering
- *  - Product card content validation
- */
 export class PublicProductsPage {
   readonly page:         Page
   readonly pageHeading:  Locator
@@ -33,7 +23,6 @@ export class PublicProductsPage {
   }
 
   async expectProductsLoaded(): Promise<void> {
-    // Either the product grid or empty state should be visible
     await expect(
       this.productCards.first().or(this.emptyState)
     ).toBeVisible({ timeout: TIMEOUTS.api })

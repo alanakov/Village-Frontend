@@ -4,13 +4,6 @@ import { ProductManagementPage }  from '../pages/ProductManagementPage'
 import { PublicProductsPage }     from '../pages/PublicProductsPage'
 import { APIHelper }              from '../helpers/api.helper'
 
-/**
- * Extended test fixture that provides pre-instantiated page objects
- * and a ready-to-use API helper for every test.
- *
- * Usage:
- *   import { test, expect } from '../fixtures/test.fixture'
- */
 type VillageFixtures = {
   loginPage:             LoginPage
   productManagementPage: ProductManagementPage

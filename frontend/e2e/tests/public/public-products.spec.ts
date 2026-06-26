@@ -1,24 +1,7 @@
-/**
- * Public Products E2E Tests — /produtos page (unauthenticated).
- *
- * Scenarios:
- *  1.  Page loads with products from public API (no auth required)
- *  2.  Product cards display correct data (name, price, image, category)
- *  3.  Product images are loaded from the correct URL
- *  4.  WhatsApp button is present on each card
- *  5.  Search filter works correctly
- *  6.  Category filter (pills) works correctly
- *  7.  "Limpar filtros" button resets the search
- *  8.  Empty state shown when search yields no results
- *  9.  Products created in admin appear in the public listing
- *  10. API response shape matches what the UI displays
- */
-
 import { test, expect } from '../../fixtures/test.fixture'
-import { ROUTES, TIMEOUTS, TEST_CATEGORY } from '../../data/test-data'
+import { ROUTES, TEST_CATEGORY } from '../../data/test-data'
 import { APIHelper } from '../../helpers/api.helper'
 
-// Products seeded for this test suite
 let seededCategoryId: number
 let seededProductId:  number
 const SEEDED_PRODUCT = {
@@ -82,10 +65,8 @@ test.describe('Site Público — Listagem de Produtos', () => {
     await publicProductsPage.goto()
     await publicProductsPage.expectProductsLoaded()
 
-    // At least one API call was made to /product
     expect(apiRequests.some((r) => r.url.includes('/product'))).toBe(true)
 
-    // Page heading is visible
     await expect(publicProductsPage.pageHeading).toBeVisible()
   })
 
@@ -97,7 +78,6 @@ test.describe('Site Público — Listagem de Produtos', () => {
   }) => {
     await publicProductsPage.goto()
 
-    // Our seeded product should be visible
     await publicProductsPage.expectProductCardVisible(SEEDED_PRODUCT.name)
 
     const card = await publicProductsPage.getProductCard(SEEDED_PRODUCT.name)
@@ -105,7 +85,6 @@ test.describe('Site Público — Listagem de Produtos', () => {
     // Description visible (partial match due to line-clamp)
     await expect(card).toContainText(SEEDED_PRODUCT.description.slice(0, 20))
 
-    // Price formatted as currency
     await expect(card.getByText(/R\$/)).toBeVisible()
   })
 
@@ -126,10 +105,8 @@ test.describe('Site Público — Listagem de Produtos', () => {
     await publicProductsPage.goto()
     await publicProductsPage.expectProductsLoaded()
 
-    // Check the seeded product's card image
     await publicProductsPage.expectProductCardHasImage(SEEDED_PRODUCT.name)
 
-    // Verify no broken images (404 on /uploads/)
     // Placeholder may not exist, so we only flag real 5xx errors
     const criticalErrors = imageErrors.filter((u) => !u.includes('placeholder'))
     expect(criticalErrors).toHaveLength(0)
@@ -158,17 +135,14 @@ test.describe('Site Público — Listagem de Produtos', () => {
 
     const totalBefore = await publicProductsPage.getProductCount()
 
-    // Search for our seeded product
     await publicProductsPage.searchFor('Artesanato E2E Público')
     await publicProductsPage.expectProductCardVisible(SEEDED_PRODUCT.name)
 
-    // Search for something that doesn't match
     await publicProductsPage.searchFor('xyztermoquenadamatcha999')
     await expect(
       page.getByText(/nenhum produto encontrado/i)
     ).toBeVisible()
 
-    // Clear search — all products reappear
     await publicProductsPage.clearSearch()
     const totalAfter = await publicProductsPage.getProductCount()
     expect(totalAfter).toBe(totalBefore)
@@ -191,10 +165,8 @@ test.describe('Site Público — Listagem de Produtos', () => {
     if (await categoryPill.isVisible({ timeout: 3_000 })) {
       await categoryPill.click()
 
-      // Only our seeded product should be visible
       await publicProductsPage.expectProductCardVisible(SEEDED_PRODUCT.name)
 
-      // Click "Todos" to reset
       await publicProductsPage.clickCategoryFilter('Todos')
       const totalAfter = await publicProductsPage.getProductCount()
       expect(totalAfter).toBeGreaterThan(0)
@@ -216,13 +188,11 @@ test.describe('Site Público — Listagem de Produtos', () => {
     await publicProductsPage.searchFor('termosemresultado000')
     await expect(page.getByText(/nenhum produto encontrado/i)).toBeVisible()
 
-    // "Limpar filtros" link appears in empty state
     const clearLink = page.getByRole('button', { name: /limpar filtros/i })
       .or(page.getByText(/limpar filtros/i))
     await expect(clearLink.first()).toBeVisible()
     await clearLink.first().click()
 
-    // Products reappear
     await publicProductsPage.expectProductsLoaded()
     const count = await publicProductsPage.getProductCount()
     expect(count).toBeGreaterThan(0)
@@ -234,7 +204,6 @@ test.describe('Site Público — Listagem de Produtos', () => {
   test('dados da API correspondem ao que é exibido no card', async ({
     page, publicProductsPage
   }) => {
-    // Capture API response
     let publicProducts: Array<Record<string, unknown>> = []
 
     const [response] = await Promise.all([
@@ -247,13 +216,11 @@ test.describe('Site Público — Listagem de Produtos', () => {
     publicProducts = await response.json()
     await publicProductsPage.expectProductsLoaded()
 
-    // Find our seeded product in the API response
     const apiProduct = publicProducts.find((p) => p['name'] === SEEDED_PRODUCT.name)
     expect(apiProduct).toBeDefined()
     expect(apiProduct!['description']).toBe(SEEDED_PRODUCT.description)
     expect(Number(apiProduct!['price'])).toBeCloseTo(SEEDED_PRODUCT.price, 1)
 
-    // Verify what the UI shows matches the API data
     const card = await publicProductsPage.getProductCard(SEEDED_PRODUCT.name)
     await expect(card).toBeVisible()
     await expect(card.getByText(/R\$/)).toBeVisible()
@@ -267,10 +234,8 @@ test.describe('Site Público — Listagem de Produtos', () => {
   }) => {
     await publicProductsPage.goto()
 
-    // Our beforeAll-seeded product must appear
     await publicProductsPage.expectProductCardVisible(SEEDED_PRODUCT.name)
 
-    // Verify the card has all expected elements
     await publicProductsPage.expectProductCardHasPrice(SEEDED_PRODUCT.name)
     await publicProductsPage.expectProductCardHasWhatsAppButton(SEEDED_PRODUCT.name)
   })

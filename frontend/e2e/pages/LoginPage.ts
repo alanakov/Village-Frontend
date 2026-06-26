@@ -1,12 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test'
 import { ROUTES, TIMEOUTS } from '../data/test-data'
 
-/**
- * LoginPage — Page Object Model for /admin (AdminLogin component).
- *
- * Selectors are based on semantic HTML attributes (id, type, role)
- * and accessible labels — resilient to CSS/class changes.
- */
 export class LoginPage {
   readonly page:          Page
   readonly emailInput:    Locator

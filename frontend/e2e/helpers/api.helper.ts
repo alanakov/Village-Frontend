@@ -2,14 +2,6 @@ import { request, APIRequestContext } from '@playwright/test'
 import { API_URL } from '../playwright.config'
 import { ADMIN_CREDENTIALS } from '../data/test-data'
 
-/**
- * APIHelper provides direct HTTP access to the backend.
- *
- * Used in tests that need to:
- *  - Seed data before a test (create category/product via API)
- *  - Teardown data after a test (delete what the test created)
- *  - Validate API state without relying on the UI
- */
 export class APIHelper {
   private ctx!: APIRequestContext
   private token: string | null = null
@@ -21,8 +13,6 @@ export class APIHelper {
   async dispose(): Promise<void> {
     await this.ctx.dispose()
   }
-
-  // ─── Auth ───────────────────────────────────────────────────────────────────
 
   async login(
     email    = ADMIN_CREDENTIALS.email,
@@ -46,8 +36,6 @@ export class APIHelper {
     return { Authorization: `Bearer ${this.token}` }
   }
 
-  // ─── Category ───────────────────────────────────────────────────────────────
-
   async createCategory(name: string): Promise<{ idCategory: number; name: string }> {
     const res = await this.ctx.post('category', {
       headers: this.authHeaders(),
@@ -66,8 +54,6 @@ export class APIHelper {
     if (!res.ok()) throw new Error(`getCategories failed: ${res.status()}`)
     return res.json()
   }
-
-  // ─── Product ────────────────────────────────────────────────────────────────
 
   async createProduct(data: {
     name:        string
@@ -101,8 +87,6 @@ export class APIHelper {
     const res = await this.ctx.delete(`product/${id}`, { headers: this.authHeaders() })
     if (!res.ok()) throw new Error(`deleteProduct failed: ${res.status()}`)
   }
-
-  // ─── Public (unauthenticated) ────────────────────────────────────────────────
 
   async getPublicProducts(): Promise<Array<Record<string, unknown>>> {
     const res = await this.ctx.get('product')

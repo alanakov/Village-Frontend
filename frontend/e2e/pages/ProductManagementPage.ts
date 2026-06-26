@@ -2,16 +2,7 @@ import { Page, Locator, expect } from '@playwright/test'
 import { ROUTES, TIMEOUTS } from '../data/test-data'
 import { waitForSkeletonToDisappear } from '../helpers/wait.helper'
 
-/**
- * ProductManagementPage — POM for /admin/products (AdminProductManagement component).
- *
- * Covers:
- *  - Listing products
- *  - Opening create / edit modal
- *  - Filling the product form
- *  - Uploading an image
- *  - Confirming deletion
- */
+/** Page Object Model for /admin/products (AdminProductManagement component). */
 export class ProductManagementPage {
   readonly page: Page
 
@@ -51,7 +42,7 @@ export class ProductManagementPage {
     this.saveButton       = page.getByRole('button', { name: /criar produto|salvar alterações/i })
     this.cancelButton     = page.getByRole('button', { name: /cancelar/i })
 
-    this.deleteConfirmButton = page.getByRole('button', { name: /excluir$/i })
+    this.deleteConfirmButton = page.getByRole('button', { name: /excluir produto/i })
   }
 
   async goto(): Promise<void> {
